@@ -1,0 +1,57 @@
+.paginatedTableContainer {
+  display: flex;
+  flex-direction: column;
+}
+
+.paginatedTable {
+  font-family: var(--font-poppins);
+  font-size: 1.2rem;
+  border-collapse: collapse;
+}
+
+.paginatedTable,
+.paginatedTable th,
+.paginatedTable td {
+  border: none;
+}
+
+.paginatedTable th,
+.paginatedTable td {
+  padding: 0.5rem 1rem;
+  text-align: center;
+  vertical-align: middle;
+}
+
+.thead {
+  color: var(--black);
+  background-color: var(--white);
+}
+
+.tbody {
+  color: var(--white);
+}
+
+.tableNav {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  width: 100%;
+}
+
+.label {
+  font-family: var(--font-poppins);
+  font-size: 1.2rem;
+  color: var(--white);
+}
+
+.button {
+  font-family: var(--font-poppins);
+  font-size: 1.4rem;
+  padding: 0.8rem 1.6rem;
+  background-color: var(--gray);
+  color: var(--white);
+  border: none;
+  border-radius: 0.4rem;
+  width: 4rem;
+  cursor: pointer;
+}

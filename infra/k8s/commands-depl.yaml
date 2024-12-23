@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: commands-depl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: commands
+  template:
+    metadata:
+      labels:
+        app: commands
+    spec:
+      containers:
+        - name: commands
+          image: racf3008/commands
+          env:
+            - name: NATS_CLIENT_ID
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: NATS_URL
+              value: 'http://nats-srv:4222'
+            - name: NATS_CLUSTER_ID
+              value: greenhive
+            - name: MONGO_URI
+              value: 'mongodb://commands-mongo-srv:27017/commands'
+            - name: JWT_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: jwt-secret
+                  key: JWT_KEY
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: commands-srv
+spec:
+  selector:
+    app: commands
+  type: ClusterIP
+  ports:
+    - name: commands
+      protocol: TCP
+      port: 3000
+      targetPort: 3000

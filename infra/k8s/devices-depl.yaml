@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: devices-depl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: devices
+  template:
+    metadata:
+      labels:
+        app: devices
+    spec:
+      containers:
+        - name: devices
+          image: racf3008/devices
+          env:
+            - name: NATS_CLIENT_ID
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: NATS_URL
+              value: 'http://nats-srv:4222'
+            - name: NATS_CLUSTER_ID
+              value: greenhive
+            - name: MONGO_URI
+              value: 'mongodb://devices-mongo-srv:27017/devices'
+            - name: JWT_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: jwt-secret
+                  key: JWT_KEY
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: devices-srv
+spec:
+  selector:
+    app: devices
+  type: ClusterIP
+  ports:
+    - name: devices
+      protocol: TCP
+      port: 3000
+      targetPort: 3000

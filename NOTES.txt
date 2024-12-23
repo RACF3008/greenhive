@@ -1,0 +1,4 @@
+mailer:
+- greenhivemailer@gmail.com
+- greenHiveMailer2024
+- secret: kubectl create secret generic mail-secret --from-literal=address=greenhivemailer@gmail.com --from-literal=password=greenHiveMailer2024

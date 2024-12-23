@@ -1,0 +1,54 @@
+.timerContainer {
+  padding: 2rem;
+  margin: 2rem 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: var(--gray);
+  justify-content: center;
+  width: 100%;
+  border-radius: 2rem;
+  transition: all 0.3s ease;
+}
+.timerContainer.on {
+  background-color: var(--light-blue);
+}
+
+.msg {
+  color: var(--white);
+  font-family: var(--font-poppins);
+  font-size: 1.6rem;
+  margin-bottom: 1rem;
+}
+
+.timer {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  margin-bottom: 1rem;
+}
+
+.counterPart {
+  color: var(--white);
+  font-family: var(--font-poppins);
+  font-size: 3rem;
+}
+
+.control {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.6rem;
+  background-color: var(--white);
+  border-radius: 50%;
+  cursor: pointer;
+  border: none;
+  margin: 0.5rem;
+}
+
+.icon {
+  height: 3rem;
+  width: 3rem;
+  fill: var(--black);
+}
