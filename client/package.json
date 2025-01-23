@@ -10,6 +10,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@greenhive/common": "^1.0.29",
     "axios": "^1.7.7",
     "next": "^14.2.13",
     "react": "^18.3.1",
