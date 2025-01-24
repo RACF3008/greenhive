@@ -5,6 +5,4 @@ COPY package.json .
 RUN npm install --omit=dev
 COPY . .
 
-COPY .env .env
-
 CMD ["npm", "start"]
