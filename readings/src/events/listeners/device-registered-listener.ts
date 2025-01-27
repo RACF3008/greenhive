@@ -14,6 +14,7 @@ export class DeviceRegisteredListener extends Listener<DeviceRegisteredEvent> {
       type: data.type,
       name: data.name,
       userId: data.userId,
+      version: data.version
     });
     await device.save();
 

@@ -9,9 +9,17 @@ export class SendVerificationListener extends Listener<SendVerificationEmailEven
     queueGroupName = queueGroupName;
 
     async onMessage(data: SendVerificationEmailEvent['data'], msg: Message) {
-        await expirationQueue.add({
-            tokenId: data.value
-        });
+        const delay = new Date(data.expiresAt).getTime() - new Date().getTime();
+        console.log('waiting miliseconds to process the job ', delay);
+
+        await expirationQueue.add(
+            {
+                token: data.value
+            }, 
+            {
+                delay,
+            }
+        );
 
         msg.ack();
     }

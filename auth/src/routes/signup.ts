@@ -67,8 +67,12 @@ router.post(
 
     // Generar el token de verificación
     const tokenValue = crypto.randomBytes(32).toString('hex');
+    const now = new Date();
+    const expiration = new Date(now.getTime() + 5 * 60 * 1000)
     const token = Token.build({
       value: tokenValue,
+      createdAt: now,
+      expiresAt: expiration,
       userId: user.id,
       used: false,
     });
@@ -78,6 +82,8 @@ router.post(
     // correos lo procese
     new SendVerificationEmailPublisher(natsWrapper.client).publish({
       value: tokenValue,
+      createdAt: now,
+      expiresAt: expiration,
       user: {
         firstName: user.firstName,
         email: user.email,

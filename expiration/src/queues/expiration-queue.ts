@@ -1,7 +1,9 @@
 import Queue from 'bull';
+import { TokenExpirationCompletePublisher } from '../events/publishers/token-expiration-complete-publisher';
+import { natsWrapper } from '../nats-wrapper';
 
 interface Payload {
-    tokenId: string;
+    token: string;
 }
 
 const expirationQueue = new Queue<Payload>('verification-token:expiration', {
@@ -11,7 +13,9 @@ const expirationQueue = new Queue<Payload>('verification-token:expiration', {
 });
 
 expirationQueue.process(async (job) => {
-    console.log('publish expiration complete event for ', job.data.tokenId);
+    new TokenExpirationCompletePublisher(natsWrapper.client).publish({
+        value: job.data.token
+    })
 })
 
 export { expirationQueue };

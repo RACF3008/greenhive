@@ -3,6 +3,8 @@ import { updateIfCurrentPlugin } from 'mongoose-update-if-current';
 
 interface TokenAttrs {
   value: string;
+  createdAt: Date;
+  expiresAt: Date;
   userId: string;
   used: boolean;
 }
@@ -31,9 +33,11 @@ const tokenSchema = new mongoose.Schema(
     },
     createdAt: {
       type: Date,
+      required: true,
     },
     expiresAt: {
       type: Date,
+      required: true,
     },
     used: {
       type: Boolean,
@@ -54,9 +58,9 @@ const tokenSchema = new mongoose.Schema(
 
 tokenSchema.pre('save', function (next) {
   if (this.isNew) {
-    this.set('createdAt', new Date().toISOString());
+    // this.set('createdAt', new Date().toISOString());
 
-    this.set('expiresAt', new Date(Date.now() + 300 * 1000).toISOString());
+    // this.set('expiresAt', new Date(Date.now() + 300 * 1000).toISOString());
 
     this.set('used', false);
   }
