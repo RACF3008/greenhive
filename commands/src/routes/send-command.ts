@@ -23,8 +23,6 @@ router.post(
     const { payload } = req.body;
     const { deviceId } = req.params;
 
-    console.log(deviceId);
-
     const device = await Device.findById(deviceId);
 
     if (!device) {

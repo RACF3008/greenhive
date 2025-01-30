@@ -10,7 +10,7 @@ import { signupRouter } from './routes/signup';
 import { signoutRouter } from './routes/signout';
 import { verifyAccountRouter } from './routes/verify-account';
 import { sendVerificationEmailRouter } from './routes/send-verification-email';
-import { sendResetEmailRouter } from './routes/send-reset-email';
+import { forgotPasswordRouter } from './routes/forgot-password';
 import { resetPasswordRouter } from './routes/reset-password';
 
 import { errorHandler, NotFoundError } from '@greenhive/common';
@@ -32,7 +32,7 @@ app.use(signinRouter);
 app.use(signupRouter);
 app.use(signoutRouter);
 app.use(verifyAccountRouter);
-app.use(sendResetEmailRouter);
+app.use(forgotPasswordRouter);
 app.use(resetPasswordRouter);
 app.use(sendVerificationEmailRouter);
 

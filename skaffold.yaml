@@ -63,6 +63,14 @@ build:
         manual:
           - src: 'src/**/*.ts'
             dest: .
+    - image: racf3008/tokens
+      context: tokens
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: 'src/**/*.ts'
+            dest: .
     - image: racf3008/client
       context: client
       docker:

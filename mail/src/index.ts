@@ -3,8 +3,8 @@ import mongoose from 'mongoose';
 import { app } from './app';
 import { natsWrapper } from './nats-wrapper';
 import { emailTransporter } from './email-transporter';
-import { SendVerificationEmailListener } from './events/listeners/send-verification-email-listener';
-import { PasswordResetListener } from './events/listeners/password-reset-listener';
+import { TokenCreatedListener } from './events/listeners/token-created-listener';
+import { UserCreatedListener } from './events/listeners/user-created-listener';
 
 const start = async () => {
   if (!process.env.MONGO_URI) {
@@ -51,8 +51,8 @@ const start = async () => {
     console.error(err);
   }
 
-  new SendVerificationEmailListener(natsWrapper.client).listen();
-  new PasswordResetListener(natsWrapper.client).listen();
+  new TokenCreatedListener(natsWrapper.client).listen();
+  new UserCreatedListener(natsWrapper.client).listen();
 
   app.listen(3000, () => {
     console.log('Listening on port 3000!');

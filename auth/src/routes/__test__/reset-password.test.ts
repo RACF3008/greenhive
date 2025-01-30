@@ -54,10 +54,11 @@ it('returns a 404 if the token is not found', async () => {
 
 it('returns a 200 if the password was changed succesfully', async () => {
   const token = await global.signup();
+  
   await global.userVerify(token);
 
   const resetToken = await request(app)
-    .post('/api/tokens/send-reset-email')
+    .post('/api/users/forgot-password')
     .send({
       email: 'test@test.com',
     })

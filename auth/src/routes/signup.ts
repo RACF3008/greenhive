@@ -4,8 +4,7 @@ import crypto from 'crypto';
 
 import { validateRequest, BadRequestError } from '@greenhive/common';
 import { User } from '../models/user';
-import { Token } from '../models/token';
-import { SendVerificationEmailPublisher } from '../events/publishers/send-verification-publisher';
+import { UserCreatedPublisher } from '../events/publishers/user-created-publisher';
 import { natsWrapper } from '../nats-wrapper';
 
 const router = express.Router();
@@ -65,30 +64,15 @@ router.post(
     });
     await user.save();
 
-    // Generar el token de verificación
-    const tokenValue = crypto.randomBytes(32).toString('hex');
-    const now = new Date();
-    const expiration = new Date(now.getTime() + 5 * 60 * 1000)
-    const token = Token.build({
-      value: tokenValue,
-      createdAt: now,
-      expiresAt: expiration,
-      userId: user.id,
-      used: false,
-    });
-    await token.save();
-
-    // Publicar un evento de verificación, para que el servicio de
-    // correos lo procese
-    new SendVerificationEmailPublisher(natsWrapper.client).publish({
-      value: tokenValue,
-      createdAt: now,
-      expiresAt: expiration,
-      user: {
-        firstName: user.firstName,
-        email: user.email,
-      },
-    });
+    // Publicar evento de creación de usuario
+    new UserCreatedPublisher(natsWrapper.client).publish({
+      id: user.id,
+      version: user.version,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+      username: user.username
+    })
 
     res.status(201).send(user);
   }

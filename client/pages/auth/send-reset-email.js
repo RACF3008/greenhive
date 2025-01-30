@@ -8,7 +8,7 @@ import SendResetEmailForm from '../../components/forms/SendResetEmailForm';
 const SendResetEmail = () => {
   const [email, setEmail] = useState('');
   const { doRequest, errors } = useRequest({
-    url: '/api/users/send-reset-email',
+    url: '/api/users/forgot-password',
     method: 'post',
     body: {
       email,
@@ -25,7 +25,7 @@ const SendResetEmail = () => {
   return (
     <main className={styles.main}>
       <div className={styles.container}>
-        <h1 className={styles.pageTitle}>Send Verification Email</h1>
+        <h1 className={styles.pageTitle}>Reset your Password</h1>
         <SendResetEmailForm
           email={email}
           setEmail={setEmail}

@@ -1,9 +1,11 @@
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import mongoose from 'mongoose';
 import request from 'supertest';
+import crypto from 'crypto';
 
 import { app } from '../app';
 import { Token } from '../models/token';
+import { User } from '../models/user';
 
 declare global {
   var signup: () => Promise<string>;
@@ -68,20 +70,31 @@ global.signup = async (): Promise<string> => {
     throw new Error('Failed to create user');
   }
 
-  const token = await Token.findOne({ userId: userId });
+  const tokenValue = crypto.randomBytes(32).toString('hex');
+  const now = new Date();
+  const expiration = new Date(now.getTime() + 60 * 1000)
 
-  if (!token) {
-    throw new Error('Failed to obtain token');
-  }
+  const token = Token.build({
+    value: tokenValue,
+    createdAt: now,
+    expiresAt: expiration,
+    userId: userId,
+    usable: true
+  });
+  await token.save();
 
   return token.value;
 };
 
 global.userVerify = async (token: string): Promise<string[]> => {
-  await request(app)
-    .post(`/api/users/verify-account/${token}`)
-    .send({})
-    .expect(200);
+  const verificationToken = await Token.findOne({value: token});
+  
+  const user = await User.findById(verificationToken?.userId);
+  if (!user) {
+    throw new Error('User not found for token');
+  }
+  user.verified = true;
+  await user.save();
 
   const signinResponse = await request(app)
     .post(`/api/users/signin`)

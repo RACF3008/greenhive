@@ -2,7 +2,7 @@ import crypto from 'crypto';
 import { Message } from 'node-nats-streaming';
 
 import { SendVerificationEmailEvent } from '@greenhive/common';
-import { SendVerificationEmailListener } from '../send-verification-email-listener';
+import { SendVerificationEmailListener } from '../token-created-listener';
 import { natsWrapper } from '../../../nats-wrapper';
 import { emailTransporter } from '../../../email-transporter';
 

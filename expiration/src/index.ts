@@ -1,5 +1,5 @@
 import { natsWrapper } from './nats-wrapper';
-import { SendVerificationListener } from './events/listeners/send-verification-listener';
+import { TokenCreatedListener } from './events/listeners/token-created-listener';
 
 const start = async () => {
   if (!process.env.NATS_CLUSTER_ID) {
@@ -25,7 +25,7 @@ const start = async () => {
     process.on('SIGINT', () => natsWrapper.client.close());
     process.on('SIGTERM', () => natsWrapper.client.close());
 
-    new SendVerificationListener(natsWrapper.client).listen();
+    new TokenCreatedListener(natsWrapper.client).listen();
   } catch (err) {
     console.error(err);
   }

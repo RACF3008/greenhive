@@ -31,7 +31,7 @@ it('returns a 200 if token is found and user is authenticated', async () => {
   const tokenValue = await global.signup();
   const token = await Token.findOne({ value: tokenValue });
   if (token) {
-    expect(token.used).toEqual(false);
+    expect(token.usable).toEqual(false);
   }
 
   await request(app)
@@ -42,7 +42,7 @@ it('returns a 200 if token is found and user is authenticated', async () => {
   const tokenUpdated = await Token.findOne({ value: tokenValue });
 
   if (tokenUpdated) {
-    expect(tokenUpdated.used).toEqual(true);
+    expect(tokenUpdated.usable).toEqual(true);
   }
 
   const updatedUser = await User.findById(token?.userId);

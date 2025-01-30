@@ -8,6 +8,8 @@ import {
 } from '@greenhive/common';
 import { Token } from '../models/token';
 import { User } from '../models/user';
+import { natsWrapper } from '../nats-wrapper';
+import { TokenUsedPublisher } from '../events/publishers/token-used-publisher';
 
 const router = express.Router();
 
@@ -31,26 +33,30 @@ router.post(
   ],
   validateRequest,
   async (req: Request, res: Response) => {
+    // Obtener el valor del token de la petición
     const tokenValue = req.params.id;
     const token = await Token.findOne({ value: tokenValue });
 
+    // Chequear si el token ha sido usado
     if (!token) {
       throw new NotFoundError();
     }
-    if (token.used) {
+    if (!token.usable) {
       throw new BadRequestError('Token already used');
     }
 
+    // Encontrar el usuario y actualizar la contraseña
     const user = await User.findById(token.userId);
     if (!user) {
       throw new BadRequestError("Token doesn't belong to a user");
     }
-
     user.password = req.body.password;
     await user.save();
 
-    token.used = true;
-    await token.save();
+    // Publicar el evento de uso de token
+    new TokenUsedPublisher(natsWrapper.client).publish({
+      value: token.value,
+    });
 
     res.status(200).send({ user });
   }

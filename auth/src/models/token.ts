@@ -1,12 +1,14 @@
 import mongoose from 'mongoose';
-import { updateIfCurrentPlugin } from 'mongoose-update-if-current';
+
+import { TokenPurpose } from '@greenhive/common';
 
 interface TokenAttrs {
   value: string;
   createdAt: Date;
   expiresAt: Date;
   userId: string;
-  used: boolean;
+  purpose: TokenPurpose;
+  usable: boolean;
 }
 
 interface TokenModel extends mongoose.Model<TokenDoc> {
@@ -18,7 +20,8 @@ interface TokenDoc extends mongoose.Document {
   userId: string;
   createdAt: Date;
   expiresAt: Date;
-  used: boolean;
+  purpose: TokenPurpose;
+  usable: boolean;
 }
 
 const tokenSchema = new mongoose.Schema(
@@ -39,10 +42,14 @@ const tokenSchema = new mongoose.Schema(
       type: Date,
       required: true,
     },
-    used: {
-      type: Boolean,
+    purpose: {
+      type: String,
       required: true,
-      default: false,
+      enum: Object.values(TokenPurpose),
+    },
+    usable: {
+      type: Boolean,
+      default: true,
     },
   },
   {
@@ -58,11 +65,7 @@ const tokenSchema = new mongoose.Schema(
 
 tokenSchema.pre('save', function (next) {
   if (this.isNew) {
-    // this.set('createdAt', new Date().toISOString());
-
-    // this.set('expiresAt', new Date(Date.now() + 300 * 1000).toISOString());
-
-    this.set('used', false);
+    this.set('usable', true);
   }
 
   next();
