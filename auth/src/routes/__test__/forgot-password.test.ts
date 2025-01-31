@@ -36,7 +36,7 @@ it('publishes an event of password:forgotten', async () => {
   await request(app)
     .post('/api/users/forgot-password')
     .send({
-      email: 'test@test.com',
+      email: 'testy@test.com',
     })
     .expect(201);
 

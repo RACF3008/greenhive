@@ -40,7 +40,7 @@ router.post(
       email: user.email
     })
 
-    res.status(201);
+    res.status(201).send();
   }
 );
 

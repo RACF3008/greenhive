@@ -3,14 +3,24 @@ import request from 'supertest';
 import { app } from '../../app';
 
 it('clears the cookie after signing out', async () => {
-  await global.signup();
+  const token = await global.signup();
+  await global.userVerify(token);
 
-  const response = await request(app)
+  const signinResponse = await request(app)
+    .post('/api/users/signin')
+    .send({
+      identifier: 'Testy2024',
+      password: 'Passw0rd',
+    })
+    .expect(200);
+  expect(signinResponse.get('Set-Cookie')).toBeDefined();
+
+  const signoutResponse = await request(app)
     .post('/api/users/signout')
     .send({})
     .expect(200);
 
-  const cookie = response.get('Set-Cookie');
+  const cookie = signoutResponse.get('Set-Cookie');
   if (!cookie) {
     throw new Error('No cookie found');
   }

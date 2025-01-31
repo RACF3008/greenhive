@@ -44,8 +44,6 @@ const ResetPasswordPage = ({ token }) => {
 ResetPasswordPage.getInitialProps = async (context, client) => {
   const { token } = context.query;
 
-  console.log(token);
-
   return { token };
 };
 

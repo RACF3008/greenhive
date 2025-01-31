@@ -1,8 +1,12 @@
 import request from 'supertest';
 import mongoose from 'mongoose';
+import crypto from 'crypto';
 
 import { app } from '../../app';
+import { Token } from '../../models/token';
 import { isIdentifier } from 'typescript';
+import { natsWrapper } from '../../nats-wrapper';
+import { NotFoundError, TokenPurpose } from '@greenhive/common';
 
 it('returns a 400 if there is no password given', async () => {
   const tokenId = new mongoose.Types.ObjectId().toHexString();
@@ -55,19 +59,26 @@ it('returns a 404 if the token is not found', async () => {
 it('returns a 200 if the password was changed succesfully', async () => {
   const token = await global.signup();
   
-  await global.userVerify(token);
+  const cookie = await global.userVerify(token);
 
-  const resetToken = await request(app)
-    .post('/api/users/forgot-password')
-    .send({
-      email: 'test@test.com',
-    })
-    .expect(201);
+  const response = await request(app)
+    .get(`/api/users/currentuser`)
+    .set('Cookie', cookie)
+    .send()
+    .expect(200);
 
-  console.log(resetToken);
+  const resetToken = Token.build({
+    value: crypto.randomBytes(32).toString('hex'),
+    createdAt: new Date(),
+    expiresAt: new Date(),
+    userId: response.body.currentUser.id,
+    purpose: TokenPurpose.PASSWORD_RESET,
+    usable: true
+  });
+  await resetToken.save();
 
   await request(app)
-    .post(`/api/users/reset-password/${resetToken.body.value}`)
+    .post(`/api/users/reset-password/${resetToken.value}`)
     .send({
       password: 'Passw0rdUpdated',
       repeatPassword: 'Passw0rdUpdated',
@@ -77,38 +88,72 @@ it('returns a 200 if the password was changed succesfully', async () => {
   await request(app)
     .post('/api/users/signin')
     .send({
-      identifier: 'test@test.com',
+      identifier: 'testy@test.com',
       password: 'Passw0rdUpdated',
     })
     .expect(200);
 });
 
-it('returns a 400 if the token is already used', async () => {
+it('returns a 400 if the token is not usable', async () => {
   const token = await global.signup();
-  await global.userVerify(token);
+  
+  const cookie = await global.userVerify(token);
 
-  const resetToken = await request(app)
-    .post('/api/tokens/send-reset-email')
-    .send({
-      email: 'test@test.com',
-    })
-    .expect(201);
+  const response = await request(app)
+    .get(`/api/users/currentuser`)
+    .set('Cookie', cookie)
+    .send()
+    .expect(200);
 
-  console.log(resetToken);
+  const resetToken = await Token.build({
+    value: crypto.randomBytes(32).toString('hex'),
+    createdAt: new Date(),
+    expiresAt: new Date(),
+    userId: response.body.currentUser.id,
+    purpose: TokenPurpose.PASSWORD_RESET,
+    usable: false
+  });
+  await resetToken.save();
+  resetToken.usable = false;
+  await resetToken.save();
 
   await request(app)
-    .post(`/api/users/reset-password/${resetToken.body.value}`)
+    .post(`/api/users/reset-password/${resetToken.value}`)
+    .send({
+      password: 'Passw0rdUpdated',
+      repeatPassword: 'Passw0rdUpdated',
+    })
+    .expect(400);
+});
+
+it('publishes a token:used event', async () => {
+  const token = await global.signup();
+  
+  const cookie = await global.userVerify(token);
+
+  const response = await request(app)
+    .get(`/api/users/currentuser`)
+    .set('Cookie', cookie)
+    .send()
+    .expect(200);
+
+  const resetToken = Token.build({
+    value: crypto.randomBytes(32).toString('hex'),
+    createdAt: new Date(),
+    expiresAt: new Date(),
+    userId: response.body.currentUser.id,
+    purpose: TokenPurpose.PASSWORD_RESET,
+    usable: true
+  });
+  await resetToken.save();
+
+  await request(app)
+    .post(`/api/users/reset-password/${resetToken.value}`)
     .send({
       password: 'Passw0rdUpdated',
       repeatPassword: 'Passw0rdUpdated',
     })
     .expect(200);
-
-  await request(app)
-    .post(`/api/users/reset-password/${resetToken.body.value}`)
-    .send({
-      password: 'Passw0rdNewUpdated',
-      repeatPassword: 'Passw0rdNewUpdated',
-    })
-    .expect(400);
+  
+  expect(natsWrapper.client.publish).toHaveBeenCalled();
 });

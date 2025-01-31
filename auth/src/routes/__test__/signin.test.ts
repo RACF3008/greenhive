@@ -27,14 +27,14 @@ it('fails when incorrect password is given', async () => {
   await request(app)
     .post('/api/users/signin')
     .send({
-      identifier: 'RACF3008',
+      identifier: 'Testy2024',
       password: 'incorrectPassword',
     })
     .expect(400);
   await request(app)
     .post('/api/users/signin')
     .send({
-      identifier: 'test@test.com',
+      identifier: 'testy@test.com',
       password: 'incorrectPassword',
     })
     .expect(400);
@@ -47,7 +47,7 @@ it('responds with a cookie when given valid credentials', async () => {
   const firstResponse = await request(app)
     .post('/api/users/signin')
     .send({
-      identifier: 'RACF3008',
+      identifier: 'Testy2024',
       password: 'Passw0rd',
     })
     .expect(200);
@@ -58,7 +58,7 @@ it('responds with a cookie when given valid credentials', async () => {
   const secondResponse = await request(app)
     .post('/api/users/signin')
     .send({
-      identifier: 'test@test.com',
+      identifier: 'testy@test.com',
       password: 'Passw0rd',
     })
     .expect(200);

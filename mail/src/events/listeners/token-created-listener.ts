@@ -34,7 +34,7 @@ export class TokenCreatedListener extends Listener<TokenCreatedEvent> {
         break;
       case TokenPurpose.PASSWORD_RESET:
         header = 'Reset your password';
-        body += "<p>We received a password reset request. If this wasn't you, please ignore this email. Otherwise, click on the link below to proceed to setup a new password.</p><p><a href='http://greenhive.io/auth/verify-account/" +
+        body += "<p>We received a password reset request. If this wasn't you, please ignore this email. Otherwise, click on the link below to proceed to setup a new password.</p><p><a href='http://greenhive.io/auth/reset-password/" +
         data.value +
         "'>Reset your passwod</a></p>"
     }

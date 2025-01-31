@@ -21,7 +21,7 @@ router.post(
       throw new NotFoundError();
     }
     if (!token.usable) {
-      throw new BadRequestError('Token already used');
+      throw new BadRequestError('Token already used or expired');
     }
 
     // Encontrar si hay algún usuario asociado al token 

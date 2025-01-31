@@ -49,7 +49,7 @@ const tokenSchema = new mongoose.Schema(
     },
     usable: {
       type: Boolean,
-      default: true,
+      default: true
     },
   },
   {

@@ -28,29 +28,18 @@ it('returns a 400 if the email has already been verified', async () => {
   await request(app)
     .post('/api/users/send-verification-email')
     .send({
-      email: 'test@test.com',
+      email: 'testy@test.com',
     })
     .expect(400);
 });
 
-it('returns a 200 if the email with the created token has been sent', async () => {
+it('publishes a user:verify event to request a token through email', async () => {
   await global.signup();
 
   await request(app)
     .post('/api/users/send-verification-email')
     .send({
-      email: 'test@test.com',
-    })
-    .expect(201);
-});
-
-it('publishes a sendVerificationEmail to NATS', async () => {
-  await global.signup();
-
-  await request(app)
-    .post('/api/users/send-verification-email')
-    .send({
-      email: 'test@test.com',
+      email: 'testy@test.com',
     })
     .expect(201);
 

@@ -15,17 +15,19 @@ export class TokenExpiredListener extends Listener<TokenExpiredEvent> {
     if (!token) {
         throw new NotFoundError();
     }
-    token.usable = false;
-    await token.save();
+    if (token.usable) {
+      token.usable = false;
+      await token.save();
 
-    // Publicar la información del nuevo token creado
-    await new TokenUpdatedPublisher(this.client).publish({
-        value: token.value,
-        createdAt: token.createdAt,
-        expiresAt: token.expiresAt,
-        userId: token.userId,
-        usable: token.usable
-    });
+      // Publicar la información del nuevo token creado
+      await new TokenUpdatedPublisher(this.client).publish({
+          value: token.value,
+          createdAt: token.createdAt,
+          expiresAt: token.expiresAt,
+          userId: token.userId,
+          usable: token.usable
+      });
+    }
 
     msg.ack();
   }

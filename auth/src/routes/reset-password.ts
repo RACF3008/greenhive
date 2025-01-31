@@ -41,8 +41,9 @@ router.post(
     if (!token) {
       throw new NotFoundError();
     }
+    console.log(token.value);
     if (!token.usable) {
-      throw new BadRequestError('Token already used');
+      throw new BadRequestError('Token already used or expired');
     }
 
     // Encontrar el usuario y actualizar la contraseña

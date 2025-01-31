@@ -6,6 +6,7 @@ import crypto from 'crypto';
 import { app } from '../app';
 import { Token } from '../models/token';
 import { User } from '../models/user';
+import { TokenPurpose } from '@greenhive/common';
 
 declare global {
   var signup: () => Promise<string>;
@@ -45,10 +46,10 @@ afterAll(async () => {
 });
 
 global.signup = async (): Promise<string> => {
-  const email = 'test@test.com';
-  const firstName = 'Name';
-  const lastName = 'Lastname';
-  const username = 'RACF3008';
+  const email = 'testy@test.com';
+  const firstName = 'Testy';
+  const lastName = 'GreenHive';
+  const username = 'Testy2024';
   const password = 'Passw0rd';
   const repeatPassword = 'Passw0rd';
 
@@ -79,7 +80,8 @@ global.signup = async (): Promise<string> => {
     createdAt: now,
     expiresAt: expiration,
     userId: userId,
-    usable: true
+    usable: true,
+    purpose: TokenPurpose.USER_AUTHENTICATION
   });
   await token.save();
 
@@ -99,7 +101,7 @@ global.userVerify = async (token: string): Promise<string[]> => {
   const signinResponse = await request(app)
     .post(`/api/users/signin`)
     .send({
-      identifier: 'test@test.com',
+      identifier: 'testy@test.com',
       password: 'Passw0rd',
     })
     .expect(200);
