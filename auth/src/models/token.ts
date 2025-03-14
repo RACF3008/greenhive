@@ -1,8 +1,9 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
-import { TokenPurpose } from '@greenhive/common';
+import { TokenPurpose } from "@greenhive/common";
 
 interface TokenAttrs {
+  id: string;
   value: string;
   createdAt: Date;
   expiresAt: Date;
@@ -16,6 +17,7 @@ interface TokenModel extends mongoose.Model<TokenDoc> {
 }
 
 interface TokenDoc extends mongoose.Document {
+  id: string;
   value: string;
   userId: string;
   createdAt: Date;
@@ -26,6 +28,10 @@ interface TokenDoc extends mongoose.Document {
 
 const tokenSchema = new mongoose.Schema(
   {
+    id: {
+      type: String,
+      required: true,
+    },
     value: {
       type: String,
       required: true,
@@ -49,7 +55,7 @@ const tokenSchema = new mongoose.Schema(
     },
     usable: {
       type: Boolean,
-      default: true
+      default: true,
     },
   },
   {
@@ -63,9 +69,9 @@ const tokenSchema = new mongoose.Schema(
   }
 );
 
-tokenSchema.pre('save', function (next) {
+tokenSchema.pre("save", function (next) {
   if (this.isNew) {
-    this.set('usable', true);
+    this.set("usable", true);
   }
 
   next();
@@ -75,6 +81,6 @@ tokenSchema.statics.build = (attrs: TokenAttrs): TokenDoc => {
   return new Token(attrs);
 };
 
-const Token = mongoose.model<TokenDoc, TokenModel>('Token', tokenSchema);
+const Token = mongoose.model<TokenDoc, TokenModel>("Token", tokenSchema);
 
 export { Token };

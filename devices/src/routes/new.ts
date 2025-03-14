@@ -10,7 +10,7 @@ import { validateRequest } from '@greenhive/common';
 const router = express.Router();
 
 router.post(
-  '/api/devices/via-gateway',
+  '/api/devices/new',
   [
     body('type')
       .isIn(['gateway', 'tower', 'station'])

@@ -1,7 +1,6 @@
-import axios, { AxiosError } from 'axios';
-import mongoose from 'mongoose';
-import express, { Request, Response } from 'express';
-import { body } from 'express-validator';
+import { mqttWrapper } from "../mqtt-wrapper";
+import express, { Request, Response } from "express";
+import { body } from "express-validator";
 
 import {
   NotFoundError,
@@ -9,15 +8,15 @@ import {
   requireAuth,
   validateRequest,
   BadRequestError,
-} from '@greenhive/common';
-import { Device } from '../models/device';
+} from "@greenhive/common";
+import { Device } from "../models/device";
 
 const router = express.Router();
 
 router.post(
-  '/api/commands/send-command/:deviceId',
+  "/api/commands/send-command/:deviceId",
   requireAuth,
-  [body('payload').notEmpty().withMessage('Payload must be provided')],
+  [body("payload").notEmpty().withMessage("Payload must be provided")],
   validateRequest,
   async (req: Request, res: Response) => {
     const { payload } = req.body;
@@ -33,55 +32,21 @@ router.post(
       throw new NotAuthorizedError();
     }
 
-    if (device.status !== 'online') {
-      throw new BadRequestError('Device is offline');
+    if (device.status !== "online") {
+      throw new BadRequestError("Device is offline");
     }
 
-    console.log(`Sending command to device: ${device!.gatewayIp}`);
+    console.log(`Sending command to device: ${device!.id}`);
 
     try {
-      const response = await axios.post(
-        `http://${device.gatewayIp}:3000`,
-        {
-          deviceId,
-          payload,
-        },
-        { timeout: 5000 }
-      );
+      await mqttWrapper.publish("tower/tests", payload);
+      console.log("✅ Comando enviado al ESP32");
 
-      res.status(200).send(response.data);
+      return res.status(200).send({});
     } catch (error) {
-      console.error('Error sending command to device:', error);
+      console.error("❌ Error al enviar comando:", error);
 
-      // Check if the error is an Axios error
-      if (axios.isAxiosError(error)) {
-        // Handle Axios-specific errors
-        const axiosError = error as AxiosError;
-
-        if (axiosError.response) {
-          // The server responded with a status code that falls out of the range of 2xx
-          console.error('Response error:', axiosError.response.status);
-          return res.status(axiosError.response.status).send({
-            error: `Error from device: ${axiosError.response.data}`,
-          });
-        } else if (axiosError.request) {
-          // The request was made but no response was received
-          console.error('No response received:', axiosError.request);
-          return res
-            .status(500)
-            .send({ error: 'No response received from device' });
-        } else {
-          // Something happened in setting up the request that triggered an Error
-          console.error('Error setting up request:', axiosError.message);
-          return res
-            .status(500)
-            .send({ error: `Error setting up request: ${axiosError.message}` });
-        }
-      } else {
-        // Non-Axios errors (unknown errors)
-        console.error('Unknown error type:', error);
-        return res.status(500).send({ error: 'An unknown error occurred' });
-      }
+      return res.status(500).send({ error: "Unable to send command" });
     }
   }
 );

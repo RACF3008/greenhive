@@ -4,7 +4,7 @@ import { json } from 'body-parser';
 import cookieSession from 'cookie-session';
 
 // importar routers
-import { registerDeviceRouter } from './routes/register';
+import { registerDeviceRouter } from './routes/new';
 import { showDeviceRouter } from './routes/show';
 import { indexDeviceRouter } from './routes/index';
 import { updateDeviceRouter } from './routes/update';

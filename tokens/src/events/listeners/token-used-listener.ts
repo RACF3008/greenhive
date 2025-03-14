@@ -1,11 +1,9 @@
 import { Message } from 'node-nats-streaming';
 
-import { Subjects, Listener, TokenUsedEvent, NotFoundError } from '@greenhive/common';
+import { Subjects, Listener, TokenUsedEvent, NotFoundError, BadRequestError } from '@greenhive/common';
 import { Token } from '../../models/token';
 import { TokenUpdatedPublisher } from '../publishers/token-updated-publisher';
 import { queueGroupName } from './queue-group-name';
-
-const EXPIRATION_WINDOW_SECONDS = 15;
 
 export class TokenUsedListener extends Listener<TokenUsedEvent> {
   readonly subject = Subjects.TokenUsed;

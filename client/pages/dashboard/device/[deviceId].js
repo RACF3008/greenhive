@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
 import styles from './device.module.css';
-import SideMenu from '../../../components/layout/SideMenu/SideMenu';
+import SideMenu from '../../../components/layout/Dashboard/Sidebar/Sidebar';
 import DeviceCard from '../../../components/ui/DeviceCard/DeviceCard';
 import Toggle from '../../../components/ui/Toggle/Toggle';
 import RangeSlider from '../../../components/ui/RangeSlider/RangeSlider';
@@ -261,13 +261,37 @@ const DevicePage = ({ device, readings }) => {
 DevicePage.getInitialProps = async (context, client) => {
   const { deviceId } = context.query;
 
-  const { data: deviceData } = await client.get(`/api/devices/${deviceId}`);
+  let deviceData = null;
+  let readingsData = null;
+  // let timersData = null; // Descomenta si necesitas esta consulta
 
-  const { data: readingsData } = await client.get(`/api/readings/${deviceId}`);
+  try {
+    const responseDevice = await client.get(`/api/devices/${deviceId}`);
+    deviceData = responseDevice.data;
+  } catch (err) {
+    console.error("Error fetching device data:", err);
+  }
 
-  // const { data: timersData } = await client.get(`/api/timers/${deviceId}`);
+  try {
+    const responseReadings = await client.get(`/api/readings/${deviceId}`);
+    readingsData = responseReadings.data;
+  } catch (err) {
+    console.error("Error fetching readings data:", err);
+  }
 
-  return { device: deviceData, readings: readingsData };
+  // Descomenta si necesitas esta consulta
+  // try {
+  //   const responseTimers = await client.get(`/api/timers/${deviceId}`);
+  //   timersData = responseTimers.data;
+  // } catch (err) {
+  //   console.error("Error fetching timers data:", err);
+  // }
+
+  return { 
+    device: deviceData, 
+    readings: readingsData, 
+    // timers: timersData // Descomenta si necesitas esta consulta
+  };
 };
 
 export default DevicePage;

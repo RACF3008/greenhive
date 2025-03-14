@@ -1,8 +1,8 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
-import { DeviceStatus } from '@greenhive/common';
-import { DeviceTypes } from '../enums/device-types';
-import { updateIfCurrentPlugin } from 'mongoose-update-if-current';
+import { DeviceStatus } from "@greenhive/common";
+import { DeviceTypes } from "../enums/device-types";
+import { updateIfCurrentPlugin } from "mongoose-update-if-current";
 
 interface DeviceAttrs {
   type: DeviceTypes;
@@ -71,18 +71,18 @@ const deviceSchema = new mongoose.Schema(
   }
 );
 
-deviceSchema.pre('save', function (next) {
-  this.set('lastUpdated', new Date().toISOString());
+deviceSchema.pre("save", function (next) {
+  this.set("lastUpdated", new Date().toISOString());
   next();
 });
 
-deviceSchema.set('versionKey', 'version');
+deviceSchema.set("versionKey", "version");
 deviceSchema.plugin(updateIfCurrentPlugin);
 
 deviceSchema.statics.build = (attrs: DeviceAttrs) => {
   return new Device(attrs);
 };
 
-const Device = mongoose.model<DeviceDoc, DeviceModel>('Device', deviceSchema);
+const Device = mongoose.model<DeviceDoc, DeviceModel>("Device", deviceSchema);
 
 export { Device };
