@@ -1,7 +1,9 @@
 name: tests-commands
 
 on:
-  pull_request
+  pull_request:
+    paths:
+      - "commands/**"
 
 jobs:
   build:

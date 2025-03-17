@@ -1,7 +1,9 @@
 name: tests-readings
 
 on:
-  pull_request
+  pull_request:
+    paths:
+      - "readings/**"
 
 jobs:
   build:
