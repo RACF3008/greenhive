@@ -50,11 +50,12 @@ const start = async () => {
     });
     mqttWrapper.onMessage((topic, message) => {
       console.log(
-        `Received message on topic "${topic}": ${message.toString()}`
+        `MQTT message recieved on topic "${topic}": ${message.toString()}`
       );
     });
     // Suscribir a tópicos
     await mqttWrapper.subscribe("tower/tests");
+    await mqttWrapper.subscribe("tower/readings");
 
     new DeviceRegisteredListener(natsWrapper.client).listen();
     new DeviceUpdatedListener(natsWrapper.client).listen();
