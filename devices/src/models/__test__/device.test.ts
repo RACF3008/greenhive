@@ -1,17 +1,15 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
-import { DeviceStatus } from '@greenhive/common';
-import { Device } from '../device';
-import { DeviceTypes } from '../../enums/device-types';
+import { DeviceStatus, DeviceTypes } from "@greenhive/common";
+import { Device } from "../device";
 
-it('implementes optimistic concurrency control', async () => {
+it("implementes optimistic concurrency control", async () => {
   // create an instance of a device
   const device = Device.build({
     type: DeviceTypes.TOWER,
-    name: 'testDevice',
+    name: "testDevice",
     status: DeviceStatus.ONLINE,
     userId: new mongoose.Types.ObjectId().toHexString(),
-    gatewayIp: '192.168.0.1',
   });
 
   // Save the device to db
@@ -35,16 +33,15 @@ it('implementes optimistic concurrency control', async () => {
     return;
   }
 
-  throw new Error('Should not reach this point');
+  throw new Error("Should not reach this point");
 });
 
-it('increments the version number on multiple saves', async () => {
+it("increments the version number on multiple saves", async () => {
   const device = Device.build({
     type: DeviceTypes.TOWER,
-    name: 'testDevice',
+    name: "testDevice",
     status: DeviceStatus.ONLINE,
     userId: new mongoose.Types.ObjectId().toHexString(),
-    gatewayIp: '192.168.0.1',
   });
 
   await device.save();

@@ -1,22 +1,30 @@
-import { Message } from 'node-nats-streaming';
+import { Message } from "node-nats-streaming";
 
-import { Subjects, Listener, ReadingReceivedEvent } from '@greenhive/common';
-import { Device } from '../../models/device';
-import { DeviceUpdatedPublisher } from '../publishers/device-updated-publisher';
+import {
+  Subjects,
+  Listener,
+  ReadingReceivedEvent,
+  DeviceTypes,
+} from "@greenhive/common";
+import { Device } from "../../models/device";
+import { DeviceUpdatedPublisher } from "../publishers/device-updated-publisher";
 
 export class ReadingReceivedListener extends Listener<ReadingReceivedEvent> {
   readonly subject = Subjects.ReadingReceived;
-  queueGroupName = 'devices-service';
+  queueGroupName = "devices-service";
 
-  async onMessage(data: ReadingReceivedEvent['data'], msg: Message) {
+  async onMessage(data: ReadingReceivedEvent["data"], msg: Message) {
     // Buscar el dispositivo al que pertenece la lectura
     const device = await Device.findById(data.device.id);
     if (!device) {
-      throw new Error('Device not found');
+      throw new Error("Device not found");
     }
 
     // Actualizar sus datos
-    device.payload = data.payload;
+    device.set({
+      lastUpdated: data.timestamp,
+      payload: data.payload,
+    });
     await device.save();
 
     // Publicar la nueva información del dispositivo
@@ -28,7 +36,6 @@ export class ReadingReceivedListener extends Listener<ReadingReceivedEvent> {
       name: device.name,
       status: device.status,
       userId: device.userId,
-      gatewayIp: device.gatewayIp,
       lastUpdated: device.lastUpdated,
     });
 

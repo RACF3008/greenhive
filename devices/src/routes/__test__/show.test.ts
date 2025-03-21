@@ -1,9 +1,9 @@
-import request from 'supertest';
-import mongoose from 'mongoose';
+import request from "supertest";
+import mongoose from "mongoose";
 
-import { app } from '../../app';
+import { app } from "../../app";
 
-it('returns a 404 if device is not found', async () => {
+it("returns a 404 if device is not found", async () => {
   const id = new mongoose.Types.ObjectId().toHexString();
 
   const response = await request(app)
@@ -12,17 +12,16 @@ it('returns a 404 if device is not found', async () => {
     .expect(404);
 });
 
-it('returns a the device info if it is found', async () => {
+it("returns a the device info if it is found", async () => {
   const { id } = global.signin();
 
   const response = await request(app)
-    .post('/api/devices/via-gateway')
+    .post("/api/devices/new")
     .send({
-      type: 'tower',
-      name: 'testDevice',
-      status: 'online',
+      type: "tower",
+      name: "testDevice",
+      status: "online",
       userId: id,
-      gatewayIp: '192.168.0.1',
     })
     .expect(201);
 
@@ -31,6 +30,6 @@ it('returns a the device info if it is found', async () => {
     .send()
     .expect(200);
 
-  expect(deviceResponse.body.type).toEqual('tower');
-  expect(deviceResponse.body.name).toEqual('testDevice');
+  expect(deviceResponse.body.type).toEqual("tower");
+  expect(deviceResponse.body.name).toEqual("testDevice");
 });
