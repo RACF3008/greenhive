@@ -39,12 +39,12 @@ router.post(
     console.log(`Sending command to device: ${device!.id}`);
 
     try {
-      await mqttWrapper.publish("tower/tests", payload);
-      console.log("✅ Comando enviado al ESP32");
+      await mqttWrapper.publish("tower/user-commands", payload);
+      console.log("Command sent to device");
 
       return res.status(200).send({});
     } catch (error) {
-      console.error("❌ Error al enviar comando:", error);
+      console.error("❌ Error sending command:", error);
 
       return res.status(500).send({ error: "Unable to send command" });
     }

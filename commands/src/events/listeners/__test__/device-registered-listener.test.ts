@@ -1,24 +1,23 @@
-import { Message } from 'node-nats-streaming';
-import mongoose from 'mongoose';
+import { Message } from "node-nats-streaming";
+import mongoose from "mongoose";
 
-import { Device } from '../../../models/device';
-import { DeviceRegisteredListener } from '../device-registered-listener';
-import { natsWrapper } from '../../../nats-wrapper';
-import { DeviceRegisteredEvent, DeviceStatus } from '@greenhive/common';
+import { Device } from "../../../models/device";
+import { DeviceRegisteredListener } from "../device-registered-listener";
+import { natsWrapper } from "../../../nats-wrapper";
+import { DeviceRegisteredEvent, DeviceStatus } from "@greenhive/common";
 
 const setup = async () => {
   // create an instance of the listener
   const listener = new DeviceRegisteredListener(natsWrapper.client);
 
   // create a fake data event
-  const data: DeviceRegisteredEvent['data'] = {
+  const data: DeviceRegisteredEvent["data"] = {
     id: new mongoose.Types.ObjectId().toHexString(),
     version: 0,
-    type: 'tower',
-    name: 'testDevice',
+    type: "tower",
+    name: "testDevice",
     status: DeviceStatus.ONLINE,
     userId: new mongoose.Types.ObjectId().toHexString(),
-    gatewayIp: '192.168.0.1',
   };
 
   // create a fake message object
@@ -30,7 +29,7 @@ const setup = async () => {
   return { listener, data, msg };
 };
 
-it('creates a new device', async () => {
+it("creates a new device", async () => {
   const { listener, data, msg } = await setup();
 
   await listener.onMessage(data, msg);
@@ -40,7 +39,7 @@ it('creates a new device', async () => {
   expect(device!.status).toEqual(data.status);
 });
 
-it('acks the message', async () => {
+it("acks the message", async () => {
   const { listener, data, msg } = await setup();
 
   // call the onMessage function

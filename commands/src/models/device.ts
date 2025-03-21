@@ -1,11 +1,12 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
+import { updateIfCurrentPlugin } from "mongoose-update-if-current";
 
 interface DeviceAttrs {
   id: string;
   type: string;
   status: string;
-  gatewayIp: string;
   userId: string;
+  version: number;
 }
 
 interface DeviceModel extends mongoose.Model<DeviceDoc> {
@@ -19,7 +20,6 @@ interface DeviceModel extends mongoose.Model<DeviceDoc> {
 interface DeviceDoc extends mongoose.Document {
   type: string;
   status: string;
-  gatewayIp: string;
   userId: string;
   version: number;
 }
@@ -31,10 +31,6 @@ const deviceSchema = new mongoose.Schema(
       required: true,
     },
     status: {
-      type: String,
-      required: true,
-    },
-    gatewayIp: {
       type: String,
       required: true,
     },
@@ -58,6 +54,9 @@ const deviceSchema = new mongoose.Schema(
   }
 );
 
+deviceSchema.set("versionKey", "version");
+deviceSchema.plugin(updateIfCurrentPlugin);
+
 deviceSchema.statics.findByEvent = (event: { id: string; version: number }) => {
   return Device.findOne({
     _id: event.id,
@@ -70,11 +69,11 @@ deviceSchema.statics.build = (attrs: DeviceAttrs) => {
     _id: attrs.id,
     type: attrs.type,
     status: attrs.status,
-    gatewayIp: attrs.gatewayIp,
     userId: attrs.userId,
+    version: attrs.version,
   });
 };
 
-const Device = mongoose.model<DeviceDoc, DeviceModel>('Device', deviceSchema);
+const Device = mongoose.model<DeviceDoc, DeviceModel>("Device", deviceSchema);
 
 export { Device };
