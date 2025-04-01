@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 import {
   DeviceStatus,
-  DeviceType,
+  DeviceTypes,
   DeviceUpdatedEvent,
 } from "@greenhive/common";
 import { natsWrapper } from "../../../nats-wrapper";
@@ -16,7 +16,7 @@ const setup = async () => {
 
   const device = Device.build({
     id: new mongoose.Types.ObjectId().toHexString(),
-    type: DeviceType.TOWER,
+    type: DeviceTypes.TOWER,
     status: DeviceStatus.OFFLINE,
     userId,
     version: 0,
@@ -26,7 +26,7 @@ const setup = async () => {
   const data: DeviceUpdatedEvent["data"] = {
     id: device.id,
     version: 1,
-    type: DeviceType.TOWER,
+    type: DeviceTypes.TOWER,
     name: "testDevice",
     status: DeviceStatus.ONLINE,
     userId,

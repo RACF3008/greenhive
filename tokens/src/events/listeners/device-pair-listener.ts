@@ -1,49 +1,45 @@
 import { Message } from "node-nats-streaming";
-import crypto from "crypto";
 
 import {
   Subjects,
   Listener,
-  UserCreatedEvent,
+  DevicePairingEvent,
+  NotFoundError,
   TokenPurpose,
 } from "@greenhive/common";
+import { queueGroupName } from "./queue-group-name";
 import { Token } from "../../models/token";
 import { TokenCreatedPublisher } from "../publishers/token-created-publisher";
-import { queueGroupName } from "./queue-group-name";
+import mongoose from "mongoose";
 
-const EXPIRATION_WINDOW_MINUTES = 15;
+const EXPIRATION_WINDOW_MINUTES = 5;
 
-export class UserCreatedListener extends Listener<UserCreatedEvent> {
-  readonly subject = Subjects.UserCreated;
+export class DevicePairingListener extends Listener<DevicePairingEvent> {
+  readonly subject = Subjects.DevicePairing;
   queueGroupName = queueGroupName;
 
-  async onMessage(data: UserCreatedEvent["data"], msg: Message) {
-    // Crear y guardar nuevo token
-    const tokenValue = crypto.randomBytes(32).toString("hex");
+  async onMessage(data: DevicePairingEvent["data"], msg: Message) {
     const now = new Date();
     const expiration = new Date(
       now.getTime() + EXPIRATION_WINDOW_MINUTES * 60 * 1000
     );
     const token = Token.build({
-      value: tokenValue,
+      value: data.tokenValue,
       createdAt: now,
       expiresAt: expiration,
-      userId: data.id,
-      purpose: TokenPurpose.USER_AUTHENTICATION,
+      purpose: TokenPurpose.DEVICE_PAIRING,
       usable: true,
     });
     await token.save();
 
-    // Publicar la información del nuevo token creado
     await new TokenCreatedPublisher(this.client).publish({
       id: token.id,
-      value: tokenValue,
+      value: token.value,
       createdAt: now,
       expiresAt: expiration,
-      purpose: TokenPurpose.USER_AUTHENTICATION,
-      userId: data.id,
+      purpose: TokenPurpose.DEVICE_PAIRING,
+      userId: data.deviceId, // Might need to change this to referenceId or something
     });
-
     msg.ack();
   }
 }

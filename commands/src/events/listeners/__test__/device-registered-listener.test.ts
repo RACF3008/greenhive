@@ -15,9 +15,7 @@ const setup = async () => {
     id: new mongoose.Types.ObjectId().toHexString(),
     version: 0,
     type: "tower",
-    name: "testDevice",
     status: DeviceStatus.ONLINE,
-    userId: new mongoose.Types.ObjectId().toHexString(),
   };
 
   // create a fake message object

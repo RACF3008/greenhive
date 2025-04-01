@@ -10,6 +10,7 @@ import {
   BadRequestError,
 } from "@greenhive/common";
 import { Device } from "../models/device";
+import { MqttDeviceCommandPublisher } from "../mqtt/publishers/device-command-publisher";
 
 const router = express.Router();
 
@@ -28,6 +29,10 @@ router.post(
       throw new NotFoundError();
     }
 
+    if (!device.userId) {
+      throw new BadRequestError("Device must have be assigned to a user");
+    }
+
     if (device.userId !== req.currentUser!.id) {
       throw new NotAuthorizedError();
     }
@@ -36,18 +41,10 @@ router.post(
       throw new BadRequestError("Device is offline");
     }
 
-    console.log(`Sending command to device: ${device!.id}`);
-
-    try {
-      await mqttWrapper.publish("tower/user-commands", payload);
-      console.log("Command sent to device");
-
-      return res.status(200).send({});
-    } catch (error) {
-      console.error("❌ Error sending command:", error);
-
-      return res.status(500).send({ error: "Unable to send command" });
-    }
+    await new MqttDeviceCommandPublisher(mqttWrapper.client).publish({
+      deviceId: device!.id,
+      payload,
+    });
   }
 );
 

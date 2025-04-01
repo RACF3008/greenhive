@@ -1,12 +1,14 @@
 import mongoose from "mongoose";
-import { updateIfCurrentPlugin } from "mongoose-update-if-current";
+
+import { TokenPurpose } from "@greenhive/common";
 
 interface TokenAttrs {
+  id: string;
   value: string;
   createdAt: Date;
   expiresAt: Date;
-  userId?: string;
-  purpose: string;
+  referenceId: string;
+  purpose: TokenPurpose;
   usable: boolean;
 }
 
@@ -15,23 +17,24 @@ interface TokenModel extends mongoose.Model<TokenDoc> {
 }
 
 interface TokenDoc extends mongoose.Document {
+  id: string;
   value: string;
-  userId?: string;
   createdAt: Date;
   expiresAt: Date;
-  purpose: string;
+  referenceId: string;
+  purpose: TokenPurpose;
   usable: boolean;
 }
 
 const tokenSchema = new mongoose.Schema(
   {
-    value: {
+    id: {
       type: String,
       required: true,
     },
-    userId: {
+    value: {
       type: String,
-      required: false,
+      required: true,
     },
     createdAt: {
       type: Date,
@@ -41,13 +44,17 @@ const tokenSchema = new mongoose.Schema(
       type: Date,
       required: true,
     },
-    purpose: {
+    referenceId: {
       type: String,
       required: true,
     },
+    purpose: {
+      type: String,
+      required: true,
+      enum: Object.values(TokenPurpose),
+    },
     usable: {
       type: Boolean,
-      required: true,
       default: true,
     },
   },

@@ -6,6 +6,7 @@ import {
   NotFoundError,
   requireAuth,
   NotAuthorizedError,
+  BadRequestError,
 } from "@greenhive/common";
 import { Device } from "../models/device";
 import { DeviceUpdatedPublisher } from "../events/publishers/device-updated-publisher";
@@ -45,6 +46,9 @@ router.put(
     });
     await device.save();
 
+    if (!device.name || !device.userId) {
+      throw new BadRequestError("Device name and userId must be provided");
+    }
     await new DeviceUpdatedPublisher(natsWrapper.client).publish({
       id: device.id,
       type: device.type,

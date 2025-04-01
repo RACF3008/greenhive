@@ -6,9 +6,9 @@ import { TowerPayload, WeatherStationPayload } from "../shared/types";
 
 interface DeviceAttrs {
   type: DeviceTypes;
-  name: string;
+  name?: string;
   status: DeviceStatus;
-  userId: string;
+  userId?: string;
   payload?: TowerPayload | WeatherStationPayload;
 }
 
@@ -18,9 +18,9 @@ interface DeviceModel extends mongoose.Model<DeviceDoc> {
 
 interface DeviceDoc extends mongoose.Document {
   type: DeviceTypes;
-  name: string;
+  name?: string;
   status: DeviceStatus;
-  userId: string;
+  userId?: string;
   payload?: TowerPayload | WeatherStationPayload;
   lastUpdated: Date;
   version: number;
@@ -35,7 +35,7 @@ const deviceSchema = new mongoose.Schema(
     },
     name: {
       type: String,
-      required: true,
+      required: false,
     },
     status: {
       type: String,
@@ -45,7 +45,7 @@ const deviceSchema = new mongoose.Schema(
     },
     userId: {
       type: String,
-      required: true,
+      required: false,
     },
     payload: {
       type: Object,

@@ -2,3 +2,15 @@ mailer:
 - greenhivemailer@gmail.com
 - greenHiveMailer2024
 - secret: kubectl create secret generic mail-secret --from-literal=address=greenhivemailer@gmail.com --from-literal=password=greenHiveMailer2024
+
+commands
+- kubectl get nodes -o wide
+- kubectl port-forward svc/mosquitto 1883:1883
+
+{
+  "id": false,
+  "type": "tower",
+  "name": "testtower",
+  "status": "starting",
+  "userId": false
+}

@@ -31,7 +31,7 @@ const setup = async () => {
       id: device.id, // Use the saved device's ID
       type: DeviceTypes.TOWER,
       name: "testDevice",
-      userId: device.userId, // Use the saved device's userId
+      userId: device.userId!, // Use the saved device's userId
     },
     payload: {
       tankLevel: 50, // Valid payload for a TOWER device

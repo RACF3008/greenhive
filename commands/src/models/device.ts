@@ -5,7 +5,7 @@ interface DeviceAttrs {
   id: string;
   type: string;
   status: string;
-  userId: string;
+  userId?: string;
   version: number;
 }
 
@@ -20,7 +20,7 @@ interface DeviceModel extends mongoose.Model<DeviceDoc> {
 interface DeviceDoc extends mongoose.Document {
   type: string;
   status: string;
-  userId: string;
+  userId?: string;
   version: number;
 }
 
@@ -36,7 +36,7 @@ const deviceSchema = new mongoose.Schema(
     },
     userId: {
       type: String,
-      required: true,
+      required: false,
     },
     version: {
       type: Number,
