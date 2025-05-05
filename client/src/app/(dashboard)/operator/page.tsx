@@ -1,6 +1,6 @@
-import MyCalendar from "@/components/Calendar";
-import MyNotifications from "@/components/Notifications";
-import MyBigCalendar from "@/components/BigCalendar";
+import MyCalendar from "@/components/widgets/Calendar";
+import MyNotifications from "@/components/widgets/Notifications";
+import MyBigCalendar from "@/components/widgets/BigCalendar";
 
 const OperatorPage = () => {
   return (

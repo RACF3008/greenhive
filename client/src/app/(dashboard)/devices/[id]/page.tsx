@@ -1,24 +1,24 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
+import { useState } from "react";
 
-import Image from 'next/image';
+import Image from "next/image";
 
-import WaterDropIcon from '@mui/icons-material/WaterDrop';
+import WaterDropIcon from "@mui/icons-material/WaterDrop";
 
-import SwitchButton from '@/components/SwitchButton';
-import TankIndicator from '@/components/TankIndicator';
-import MyLineChart from '@/components/LineChart';
-import MyNotifications from '@/components/Notifications';
-import Timers from '@/components/Timers';
+import SwitchButton from "@/components/SwitchButton";
+import TankIndicator from "@/components/TankIndicator";
+import MyLineChart from "@/components/widgets/LineChart";
+import MyNotifications from "@/components/widgets/Notifications";
+import Timers from "@/components/Timers";
 
 const deviceData = {
-  id: '123442565429',
-  type: 'tower',
-  name: 'MyTower1',
+  id: "123442565429",
+  type: "tower",
+  name: "MyTower1",
   description:
-    'Lorem ipsum dolor sit amet consectetur adipiscing elit. Lorem ipsum dolor sit amet consectetur adipiscing elit.',
-  status: 'offline',
+    "Lorem ipsum dolor sit amet consectetur adipiscing elit. Lorem ipsum dolor sit amet consectetur adipiscing elit.",
+  status: "offline",
   payload: {
     tankLevel: 30,
     pumpOn: false,

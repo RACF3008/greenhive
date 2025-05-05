@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import { usePathname } from 'next/navigation';
-import Image from 'next/image';
-import Link from 'next/link';
+import { usePathname } from "next/navigation";
+import Image from "next/image";
+import Link from "next/link";
 
 const AuthNavbar = () => {
   const pathname = usePathname();
@@ -20,17 +20,17 @@ const AuthNavbar = () => {
       </Link>
 
       <div className="flex items-center gap-2">
-        <span className="hidden lg:block text-white font-light">
-          {pathname === '/sign-in'
+        <span className="hidden lg:block text-white font-light text-sm">
+          {pathname === "/sign-in"
             ? "Don't have an account?"
-            : 'Already have an account?'}
+            : "Already have an account?"}
         </span>
         <Link
-          href="/"
+          href={pathname === "/signin" ? "/signup" : "/signin"}
           className="flex items-center justify-center lg:justify-start gap-1"
         >
           <span className="text-white font-bold text-lg underline">
-            {pathname === '/sign-in' ? 'Sign-Up' : 'Sign-In'}
+            {pathname === "/signin" ? "Sign-Up" : "Sign-In"}
           </span>
         </Link>
       </div>

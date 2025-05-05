@@ -1,9 +1,9 @@
-import StatsCard from '@/components/StatsCard';
-import MyBarChart from '@/components/BarChart';
-import MyRadialChart from '@/components/RadialChart';
-import MyLineChart from '@/components/LineChart';
-import MyCalendar from '@/components/Calendar';
-import MyNotifications from '@/components/Notifications';
+import StatsCard from "@/components/StatsCard";
+import MyBarChart from "@/components/widgets/BarChart";
+import MyRadialChart from "@/components/widgets/RadialChart";
+import MyLineChart from "@/components/widgets/LineChart";
+import MyCalendar from "@/components/widgets/Calendar";
+import MyNotifications from "@/components/widgets/Notifications";
 
 const AdminPage = () => {
   return (
