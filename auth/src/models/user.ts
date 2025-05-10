@@ -1,7 +1,8 @@
-import mongoose from "mongoose";
-import { updateIfCurrentPlugin } from "mongoose-update-if-current";
+import mongoose from 'mongoose';
+import { updateIfCurrentPlugin } from 'mongoose-update-if-current';
 
-import { Password } from "../services/password";
+import { Password } from '../services/password';
+import { TeamRoles } from '@greenhive/common';
 
 interface UserAttrs {
   firstName: string;
@@ -10,6 +11,7 @@ interface UserAttrs {
   email: string;
   password: string;
   verified: boolean;
+  role?: TeamRoles;
 }
 
 interface UserModel extends mongoose.Model<UserDoc> {
@@ -23,6 +25,7 @@ interface UserDoc extends mongoose.Document {
   email: string;
   password: string;
   verified: boolean;
+  role: TeamRoles;
   version: number;
 }
 
@@ -53,6 +56,12 @@ const userSchema = new mongoose.Schema(
       required: true,
       default: false,
     },
+    role: {
+      type: String,
+      required: true,
+      enum: Object.values(TeamRoles),
+      default: TeamRoles.VIEWER,
+    },
   },
   {
     toJSON: {
@@ -66,21 +75,21 @@ const userSchema = new mongoose.Schema(
   }
 );
 
-userSchema.pre("save", async function (done) {
-  if (this.isModified("password")) {
-    const hashed = await Password.toHash(this.get("password"));
-    this.set("password", hashed);
+userSchema.pre('save', async function (done) {
+  if (this.isModified('password')) {
+    const hashed = await Password.toHash(this.get('password'));
+    this.set('password', hashed);
   }
   done();
 });
 
-userSchema.set("versionKey", "version");
+userSchema.set('versionKey', 'version');
 userSchema.plugin(updateIfCurrentPlugin);
 
 userSchema.statics.build = (attrs: UserAttrs) => {
   return new User(attrs);
 };
 
-const User = mongoose.model<UserDoc, UserModel>("User", userSchema);
+const User = mongoose.model<UserDoc, UserModel>('User', userSchema);
 
 export { User };

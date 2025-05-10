@@ -1,23 +1,18 @@
-import { MongoMemoryServer } from "mongodb-memory-server";
-import mongoose from "mongoose";
-import jwt from "jsonwebtoken";
+import { MongoMemoryServer } from 'mongodb-memory-server';
+import mongoose from 'mongoose';
+import jwt from 'jsonwebtoken';
 
 declare global {
   var signin: () => { cookie: string[]; id: string };
 }
 
-jest.mock("../nats-wrapper");
-jest.mock("../mqtt-wrapper", () => ({
-  mqttWrapper: {
-    publish: jest.fn().mockResolvedValue(undefined),
-    onMessage: jest.fn(),
-  },
-}));
+jest.mock('../nats-wrapper');
+jest.mock('../mqtt-wrapper');
 
 let mongo: any;
 
 beforeAll(async () => {
-  process.env.JWT_KEY = "testkey";
+  process.env.JWT_KEY = 'testkey';
 
   mongo = await MongoMemoryServer.create();
   const mongoUri = await mongo.getUri();
@@ -48,10 +43,10 @@ global.signin = () => {
   const id = new mongoose.Types.ObjectId().toHexString();
   const payload = {
     id,
-    firstName: "Name",
-    lastName: "Lastname",
-    username: "RACF3008",
-    email: "test@test.com",
+    firstName: 'Name',
+    lastName: 'Lastname',
+    username: 'RACF3008',
+    email: 'test@test.com',
   };
 
   const token = jwt.sign(payload, process.env.JWT_KEY!);
@@ -60,7 +55,7 @@ global.signin = () => {
 
   const sessionJSON = JSON.stringify(session);
 
-  const base64 = Buffer.from(sessionJSON).toString("base64");
+  const base64 = Buffer.from(sessionJSON).toString('base64');
 
   return { cookie: [`session=${base64}`], id };
 };

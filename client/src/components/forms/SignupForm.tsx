@@ -1,61 +1,71 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
-import { z } from "zod";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import Router from "next/router";
+import { useEffect, useState } from 'react';
+import { z } from 'zod';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import Router from 'next/router';
+import Link from 'next/link';
 
-import useRequest from "../../hooks/use-request";
+import useRequest from '../../hooks/use-request';
+import InputField from './InputField';
+import { CheckboxField as TermsCheckbox } from './CheckboxField';
 
 /* VERIFICATION SCHEMA */
 const schema = z
   .object({
-    firstName: z.string(),
-    lastName: z.string(),
+    firstName: z.string().nonempty({ message: 'First name is required' }),
+    lastName: z.string().nonempty({ message: 'Last name is required' }),
     username: z
       .string()
-      .min(8, { message: "Username must have 8 or more characters" })
-      .max(20, { message: "Username must have 20 or less characters" }),
-    email: z.string().email({ message: "Email must be valid" }),
+      .min(8, { message: 'Username must have 8 or more characters' })
+      .max(20, { message: 'Username must have 20 or less characters' }),
+    email: z.string().email({ message: 'Email must be valid' }),
     password: z
       .string()
-      .min(8, { message: "Password must have 8 or more characters" })
-      .max(20, { message: "Password must have 20 or less characters" })
+      .min(8, { message: 'Password must have 8 or more characters' })
+      .max(20, { message: 'Password must have 20 or less characters' })
       .refine((val) => /[A-Z]/.test(val), {
-        message: "Password must contain at least one uppercase letter",
+        message: 'Password must contain at least one uppercase letter',
       })
       .refine((val) => /[0-9]/.test(val), {
-        message: "Password must contain at least one number",
+        message: 'Password must contain at least one number',
       }),
-    repeatPassword: z.string(),
+    repeatPassword: z
+      .string()
+      .nonempty({ message: 'Please repeat your password' }),
+    termsAndConditions: z.literal(true, {
+      errorMap: () => ({ message: 'You must accept the terms and conditions' }),
+    }),
   })
   .refine((data) => data.password === data.repeatPassword, {
-    message: "Passwords do not match",
-    path: ["repeatPassword"],
+    message: 'Passwords do not match',
+    path: ['repeatPassword'],
   });
+
+type Inputs = z.infer<typeof schema>;
 
 const SignupForm = ({ data }: { data: any }) => {
   /* HOOKS */
   const { doRequest, errors: requestErrors } = useRequest({
-    url: "/api/users/signup",
-    method: "post",
-    onSuccess: () => Router.push("/"),
+    url: '/api/users/signup',
+    method: 'post',
+    onSuccess: () => Router.push('/'),
   });
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm({
+  } = useForm<Inputs>({
     resolver: zodResolver(schema),
   });
 
-  const [visibleError, setVisibleError] = useState("");
+  const [visibleError, setVisibleError] = useState('');
 
   useEffect(() => {
-    if (requestErrors && typeof requestErrors === "string") {
+    if (requestErrors && typeof requestErrors === 'string') {
       setVisibleError(requestErrors);
-      const timer = setTimeout(() => setVisibleError(""), 4000);
+      const timer = setTimeout(() => setVisibleError(''), 4000);
       return () => clearTimeout(timer);
     }
   }, [requestErrors]);
@@ -76,84 +86,75 @@ const SignupForm = ({ data }: { data: any }) => {
         onSubmit={(e) => handleOnSubmit(e)}
       >
         {/* FIRST NAME */}
-        <label className="text-base text-white font-medium">First Name:</label>
-        <input
-          type="text"
-          {...register("firstName")}
-          className="ring-[1px] font-light ring-primary-300 p-2 rounded-md bg-primary-500"
+        <InputField
+          label="First Name"
+          name="firstName"
+          register={register}
+          defaultValue={data?.firstName}
+          error={errors.firstName}
         />
-        {errors.firstName?.message && (
-          <p className="text-xs text-redAccent-400">
-            {errors.firstName.message.toString()}
-          </p>
-        )}
 
         {/* LAST NAME */}
-        <label className="text-base text-white font-medium">Last Name:</label>
-        <input
-          type="text"
-          {...register("lastName")}
-          className="ring-[1px] font-light ring-primary-300 p-2 rounded-md bg-primary-500"
+        <InputField
+          label="Last Name"
+          name="lastName"
+          register={register}
+          defaultValue={data?.lastName}
+          error={errors.lastName}
         />
-        {errors.lastName?.message && (
-          <p className="text-xs text-redAccent-400">
-            {errors.lastName.message.toString()}
-          </p>
-        )}
 
         {/* USERNAME */}
-        <label className="text-base text-white font-medium">Username:</label>
-        <input
-          type="text"
-          {...register("username")}
-          className="ring-[1px] font-light ring-primary-300 p-2 rounded-md bg-primary-500"
+        <InputField
+          label="Username"
+          name="username"
+          register={register}
+          defaultValue={data?.username}
+          error={errors.username}
         />
-        {errors.username?.message && (
-          <p className="text-xs text-redAccent-400">
-            {errors.username.message.toString()}
-          </p>
-        )}
 
         {/* EMAIL */}
-        <label className="text-base text-white font-medium">Email:</label>
-        <input
-          type="text"
-          {...register("email")}
-          className="ring-[1px] font-light ring-primary-300 p-2 rounded-md bg-primary-500"
+        <InputField
+          label="E-mail"
+          name="email"
+          register={register}
+          defaultValue={data?.email}
+          error={errors.email}
         />
-        {errors.email?.message && (
-          <p className="text-xs text-redAccent-400">
-            {errors.email.message.toString()}
-          </p>
-        )}
 
         {/* PASSWORD */}
-        <label className="text-base text-white font-medium">Password:</label>
-        <input
+        <InputField
+          label="Password"
+          name="password"
           type="password"
-          {...register("password")}
-          className="ring-[1px] font-light ring-primary-300 p-2 rounded-md bg-primary-500"
+          register={register}
+          defaultValue={data?.password}
+          error={errors.password}
         />
-        {errors.password?.message && (
-          <p className="text-xs text-redAccent-400">
-            {errors.password.message.toString()}
-          </p>
-        )}
 
         {/* REPEAT PASSWORD */}
-        <label className="text-base text-white font-medium">
-          Repeat Password:
-        </label>
-        <input
+        <InputField
+          label="Repeat Password"
+          name="repeatPassword"
           type="password"
-          {...register("repeatPassword")}
-          className="ring-[1px] font-light ring-primary-300 p-2 rounded-md bg-primary-500"
+          register={register}
+          defaultValue={data?.repeatPassword}
+          error={errors.repeatPassword}
         />
-        {errors.repeatPassword?.message && (
-          <p className="text-xs text-redAccent-400">
-            {errors.repeatPassword.message.toString()}
-          </p>
-        )}
+
+        {/* TERMS AND CONDITIONS */}
+        <TermsCheckbox
+          text={
+            <>
+              I agree to the{' '}
+              <Link href="/terms-and-conditions" className="underline">
+                Terms and Conditions
+              </Link>
+            </>
+          }
+          name="termsAndConditions"
+          register={register}
+          error={errors.termsAndConditions}
+        />
 
         {/* SUBMIT BUTTON */}
         <div className="flex justify-end mt-2">
