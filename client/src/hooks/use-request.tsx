@@ -1,31 +1,34 @@
-import axios from 'axios';
-import { useState } from 'react';
+import axios from "axios";
+import { useState } from "react";
 
 interface UseRequestProps {
   url: string;
-  method: 'get' | 'post' | 'put' | 'delete';
+  method: "get" | "post" | "put" | "delete";
   onSuccess?: (data?: any) => void;
 }
 
 const useRequest = ({ url, method, onSuccess }: UseRequestProps) => {
-  const [errors, setErrors] = useState<null | JSX.Element>(null);
+  const [errors, setErrors] = useState<null | string>(null);
 
   const doRequest = async (body = {}) => {
     try {
       setErrors(null);
 
+      console.log("Sending request to:", url);
+      console.log("Request body:", body);
+
       let response;
       switch (method) {
-        case 'get':
+        case "get":
           response = await axios.get(url, { params: body });
           break;
-        case 'post':
+        case "post":
           response = await axios.post(url, body);
           break;
-        case 'put':
+        case "put":
           response = await axios.put(url, body);
           break;
-        case 'delete':
+        case "delete":
           response = await axios.delete(url, { data: body });
           break;
         default:
@@ -38,12 +41,13 @@ const useRequest = ({ url, method, onSuccess }: UseRequestProps) => {
 
       return response.data;
     } catch (err: any) {
+      const errorMessages =
+        err.response?.data?.errors?.map((e: any) => e.message).join("\n") ||
+        "An unexpected error occurred";
+
       setErrors(
-        <div className="bg-red-100 p-2 text-red-800 rounded">
-          {err.response?.data?.errors?.map((e: any, i: number) => (
-            <div key={i}>{e.message}</div>
-          )) || 'An error occurred'}
-        </div>
+        err.response?.data?.errors?.map((e: any) => e.message).join(", ") ||
+          "An unexpected error occurred"
       );
     }
   };

@@ -1,57 +1,63 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import { z } from 'zod';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import Router from 'next/router';
-import Link from 'next/link';
+import { useEffect, useState } from "react";
+import { z } from "zod";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
 
-import useRequest from '../../hooks/use-request';
-import InputField from './InputField';
-import { CheckboxField as TermsCheckbox } from './CheckboxField';
+import useRequest from "../../hooks/use-request";
+import InputField from "./InputField";
+import { CheckboxField as TermsCheckbox } from "./CheckboxField";
 
 /* VERIFICATION SCHEMA */
 const schema = z
   .object({
-    firstName: z.string().nonempty({ message: 'First name is required' }),
-    lastName: z.string().nonempty({ message: 'Last name is required' }),
+    firstName: z.string().nonempty({ message: "First name is required" }),
+    lastName: z.string().nonempty({ message: "Last name is required" }),
     username: z
       .string()
-      .min(8, { message: 'Username must have 8 or more characters' })
-      .max(20, { message: 'Username must have 20 or less characters' }),
-    email: z.string().email({ message: 'Email must be valid' }),
+      .min(8, { message: "Username must have 8 or more characters" })
+      .max(20, { message: "Username must have 20 or less characters" }),
+    email: z.string().email({ message: "Email must be valid" }),
     password: z
       .string()
-      .min(8, { message: 'Password must have 8 or more characters' })
-      .max(20, { message: 'Password must have 20 or less characters' })
+      .min(8, { message: "Password must have 8 or more characters" })
+      .max(20, { message: "Password must have 20 or less characters" })
       .refine((val) => /[A-Z]/.test(val), {
-        message: 'Password must contain at least one uppercase letter',
+        message: "Password must contain at least one uppercase letter",
       })
       .refine((val) => /[0-9]/.test(val), {
-        message: 'Password must contain at least one number',
+        message: "Password must contain at least one number",
       }),
     repeatPassword: z
       .string()
-      .nonempty({ message: 'Please repeat your password' }),
+      .nonempty({ message: "Please repeat your password" }),
     termsAndConditions: z.literal(true, {
-      errorMap: () => ({ message: 'You must accept the terms and conditions' }),
+      errorMap: () => ({ message: "You must accept the terms and conditions" }),
     }),
   })
   .refine((data) => data.password === data.repeatPassword, {
-    message: 'Passwords do not match',
-    path: ['repeatPassword'],
+    message: "Passwords do not match",
+    path: ["repeatPassword"],
   });
 
 type Inputs = z.infer<typeof schema>;
 
 const SignupForm = ({ data }: { data: any }) => {
   /* HOOKS */
+  const router = useRouter();
+
   const { doRequest, errors: requestErrors } = useRequest({
-    url: '/api/users/signup',
-    method: 'post',
-    onSuccess: () => Router.push('/'),
+    url: "/api/users/signup",
+    method: "post",
+    onSuccess: () => {
+      console.log("Request done successfully");
+      router.push("/verification-email-sent");
+    },
   });
+
   const {
     register,
     handleSubmit,
@@ -60,19 +66,21 @@ const SignupForm = ({ data }: { data: any }) => {
     resolver: zodResolver(schema),
   });
 
-  const [visibleError, setVisibleError] = useState('');
+  const [visibleError, setVisibleError] = useState("");
 
   useEffect(() => {
-    if (requestErrors && typeof requestErrors === 'string') {
+    if (requestErrors && typeof requestErrors === "string") {
       setVisibleError(requestErrors);
-      const timer = setTimeout(() => setVisibleError(''), 4000);
+      const timer = setTimeout(() => setVisibleError(""), 4000);
       return () => clearTimeout(timer);
     }
   }, [requestErrors]);
 
-  const handleOnSubmit = handleSubmit(async (formData) => {
-    await doRequest(formData);
-  });
+  /* HANDLERS */
+  const handleOnSubmit = async (formData: Inputs) => {
+    console.log("Form data:", formData);
+    doRequest(formData);
+  };
 
   return (
     <>
@@ -83,7 +91,7 @@ const SignupForm = ({ data }: { data: any }) => {
       )}
       <form
         className="flex flex-col gap-4 bg-primary-700 p-4 w-3/4 md:w-1/2 rounded-md"
-        onSubmit={(e) => handleOnSubmit(e)}
+        onSubmit={handleSubmit(handleOnSubmit)}
       >
         {/* FIRST NAME */}
         <InputField
@@ -145,7 +153,7 @@ const SignupForm = ({ data }: { data: any }) => {
         <TermsCheckbox
           text={
             <>
-              I agree to the{' '}
+              I agree to the{" "}
               <Link href="/terms-and-conditions" className="underline">
                 Terms and Conditions
               </Link>

@@ -1,4 +1,4 @@
-import StatsCard from "@/components/StatsCard";
+import StatsCard from "@/components/widgets/StatsCard";
 import MyBarChart from "@/components/widgets/BarChart";
 import MyRadialChart from "@/components/widgets/RadialChart";
 import MyLineChart from "@/components/widgets/LineChart";
