@@ -19,8 +19,8 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const client = buildClient();
-
   let currentUser = null;
+
   try {
     const { data } = await client.get('/api/users/currentuser');
     currentUser = data.currentUser;

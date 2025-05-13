@@ -1,36 +1,9 @@
-"use client";
+import Link from 'next/link';
+import { notFound } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import useRequest from '@/hooks/use-request';
 
-import Link from "next/link";
-import { notFound } from "next/navigation";
-import { useSearchParams } from "next/navigation";
-
-type VerificationResponse = {
-  success: boolean;
-};
-
-const verifyToken = async (token: string): Promise<boolean> => {
-  try {
-    const res = await fetch(
-      `https://localhost/api/users/verify-account/${token}`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        cache: "no-store",
-      }
-    );
-
-    if (!res.ok) {
-      return false;
-    }
-
-    const data: VerificationResponse = await res.json();
-    return data.success;
-  } catch (error) {
-    return false;
-  }
-};
+import buildClient from '@/api/build-client';
 
 const VerificationCompletePage = async ({
   searchParams,
@@ -38,38 +11,66 @@ const VerificationCompletePage = async ({
   searchParams: { token?: string };
 }) => {
   const token = searchParams.token;
+  let verified = false;
+
   if (!token) {
-    notFound();
+    notFound(); // shows 404
   }
 
-  const verified = await verifyToken(token);
+  const { doRequest, errors: requestErrors } = useRequest({
+    url: '/api/users/verify-account/' + token,
+    method: 'post',
+    onSuccess: () => {
+      console.log('Request done successfully');
+      verified = true;
+    },
+  });
+
+  const [visibleError, setVisibleError] = useState('');
+
+  doRequest();
+
+  useEffect(() => {
+    if (requestErrors && typeof requestErrors === 'string') {
+      setVisibleError(requestErrors);
+      const timer = setTimeout(() => setVisibleError(''), 4000);
+      return () => clearTimeout(timer);
+    }
+  }, [requestErrors]);
 
   return (
-    <div className="flex flex-col w-full items-center my-8">
-      <h1 className="text-center mb-4 font-semibold text-2xl">
-        {verified ? "Account Verified" : "Account Verification Failed"}
-      </h1>
-      <div className="bg-primary-600 p-4 flex flex-col gap-4 rounded-md w-4/5 lg:w-1/2">
-        <span className="font-light text-lg">
-          {verified
-            ? "Congratulations! Your account has been verified successfully. You can now start using our services."
-            : "We weren't able to verify your account. Make sure to click on the link located in the email we sent you, as is. If the error persists, please try again by clicking in the link below."}
-        </span>
-        {verified && (
-          <div className="flex items-center justify-end">
-            <span className="font-light text-sm text-primary-100">
-              Didn't Receive the Email?
-            </span>
-            <Link
-              href="/check-email"
-              className="ml-2 underline text-sm text-white"
-            >
-              Resend
-            </Link>
-          </div>
-        )}
+    <>
+      {visibleError && (
+        <div className="fixed top-4 left-1/2 transform -translate-x-1/2 bg-red-600 text-white px-6 py-3 rounded-md shadow-md z-50">
+          {visibleError}
+        </div>
+      )}
+      <div className="flex flex-col w-full items-center my-8">
+        <h1 className="text-center mb-4 font-semibold text-2xl">
+          {verified ? 'Account Verified' : 'Account Verification Failed'}
+        </h1>
+        <div className="bg-primary-600 p-4 flex flex-col gap-4 rounded-md w-4/5 lg:w-1/2">
+          <span className="font-light text-lg">
+            {verified
+              ? 'Congratulations! Your account has been verified successfully. You can now start using our services.'
+              : "We weren't able to verify your account. Make sure to click on the link located in the email we sent you. If the error persists, please try again by clicking the link below."}
+          </span>
+          {!verified && (
+            <div className="flex items-center justify-end">
+              <span className="font-light text-sm text-primary-100">
+                Didn't Receive the Email?
+              </span>
+              <Link
+                href="/check-email"
+                className="ml-2 underline text-sm text-white"
+              >
+                Resend
+              </Link>
+            </div>
+          )}
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 
