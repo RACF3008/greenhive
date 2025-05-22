@@ -1,9 +1,6 @@
-import Link from 'next/link';
-import { notFound } from 'next/navigation';
-import { useEffect, useState } from 'react';
-import useRequest from '@/hooks/use-request';
-
-import buildClient from '@/api/build-client';
+import VerificationResult from "./components/VerificationResult";
+import { notFound } from "next/navigation";
+import axios from "axios";
 
 const VerificationCompletePage = async ({
   searchParams,
@@ -11,67 +8,35 @@ const VerificationCompletePage = async ({
   searchParams: { token?: string };
 }) => {
   const token = searchParams.token;
-  let verified = false;
 
   if (!token) {
-    notFound(); // shows 404
+    notFound();
   }
 
-  const { doRequest, errors: requestErrors } = useRequest({
-    url: '/api/users/verify-account/' + token,
-    method: 'post',
-    onSuccess: () => {
-      console.log('Request done successfully');
-      verified = true;
-    },
-  });
+  let verified = false;
+  let errorMessage = "";
 
-  const [visibleError, setVisibleError] = useState('');
-
-  doRequest();
-
-  useEffect(() => {
-    if (requestErrors && typeof requestErrors === 'string') {
-      setVisibleError(requestErrors);
-      const timer = setTimeout(() => setVisibleError(''), 4000);
-      return () => clearTimeout(timer);
+  try {
+    await axios.post(
+      `${process.env.API_URL}/api/users/verify-account/${token}`
+    );
+    verified = true;
+  } catch (error: any) {
+    if (axios.isAxiosError(error)) {
+      const backendError = error.response?.data;
+      if (backendError?.errors?.[0]?.message) {
+        errorMessage = backendError.errors[0].message;
+      } else if (backendError?.message) {
+        errorMessage = backendError.message;
+      } else {
+        errorMessage = "Unexpected server error.";
+      }
+    } else {
+      errorMessage = error.message || "Unknown error occurred.";
     }
-  }, [requestErrors]);
+  }
 
-  return (
-    <>
-      {visibleError && (
-        <div className="fixed top-4 left-1/2 transform -translate-x-1/2 bg-red-600 text-white px-6 py-3 rounded-md shadow-md z-50">
-          {visibleError}
-        </div>
-      )}
-      <div className="flex flex-col w-full items-center my-8">
-        <h1 className="text-center mb-4 font-semibold text-2xl">
-          {verified ? 'Account Verified' : 'Account Verification Failed'}
-        </h1>
-        <div className="bg-primary-600 p-4 flex flex-col gap-4 rounded-md w-4/5 lg:w-1/2">
-          <span className="font-light text-lg">
-            {verified
-              ? 'Congratulations! Your account has been verified successfully. You can now start using our services.'
-              : "We weren't able to verify your account. Make sure to click on the link located in the email we sent you. If the error persists, please try again by clicking the link below."}
-          </span>
-          {!verified && (
-            <div className="flex items-center justify-end">
-              <span className="font-light text-sm text-primary-100">
-                Didn't Receive the Email?
-              </span>
-              <Link
-                href="/check-email"
-                className="ml-2 underline text-sm text-white"
-              >
-                Resend
-              </Link>
-            </div>
-          )}
-        </div>
-      </div>
-    </>
-  );
+  return <VerificationResult verified={verified} errorMessage={errorMessage} />;
 };
 
 export default VerificationCompletePage;
