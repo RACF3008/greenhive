@@ -5,7 +5,7 @@ import { natsWrapper } from '../../nats-wrapper';
 
 it('returns a 400 if the email given isnt valid', async () => {
   await request(app)
-    .post('/api/users/send-verification-email')
+    .post('/api/users/send-verification')
     .send({
       email: 'testtest.com',
     })
@@ -14,7 +14,7 @@ it('returns a 400 if the email given isnt valid', async () => {
 
 it('returns a 404 if a user with the provided email is not found', async () => {
   await request(app)
-    .post('/api/users/send-verification-email')
+    .post('/api/users/send-verification')
     .send({
       email: 'test@test.com',
     })
@@ -26,7 +26,7 @@ it('returns a 400 if the email has already been verified', async () => {
   await userVerify(token);
 
   await request(app)
-    .post('/api/users/send-verification-email')
+    .post('/api/users/send-verification')
     .send({
       email: 'testy@test.com',
     })
@@ -37,7 +37,7 @@ it('publishes a user:verify event to request a token through email', async () =>
   await global.signup();
 
   await request(app)
-    .post('/api/users/send-verification-email')
+    .post('/api/users/send-verification')
     .send({
       email: 'testy@test.com',
     })

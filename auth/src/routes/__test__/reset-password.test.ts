@@ -1,162 +1,40 @@
-import request from "supertest";
-import mongoose from "mongoose";
-import crypto from "crypto";
+import request from 'supertest';
 
-import { app } from "../../app";
-import { Token } from "../../models/token";
-import { isIdentifier } from "typescript";
-import { natsWrapper } from "../../nats-wrapper";
-import { NotFoundError, TokenPurpose } from "@greenhive/common";
+import { app } from '../../app';
+import { natsWrapper } from '../../nats-wrapper';
 
-it("returns a 400 if there is no password given", async () => {
-  const tokenId = new mongoose.Types.ObjectId().toHexString();
-
+it('returns a 400 if an email is missing or is invalid', async () => {
+  // Si el correo falta
   await request(app)
-    .post(`/api/users/reset-password/${tokenId}`)
+    .post('/api/users/reset-password')
     .send({
-      password: "",
-      repeatPassword: "",
+      email: 'testtest.com',
+    })
+    .expect(400);
+
+  // Si la estructura del correo es invalida
+  await request(app).post('/api/users/reset-password').send({}).expect(400);
+});
+
+it('returns a 400 if a user with the given email is not found', async () => {
+  await request(app)
+    .post('/api/users/reset-password')
+    .send({
+      email: 'test@test.com',
     })
     .expect(400);
 });
 
-it("returns a 400 if the passowrd doesnt meet the requirements", async () => {
-  const tokenId = new mongoose.Types.ObjectId().toHexString();
+it('publishes an event of password:forgotten', async () => {
+  await global.signup();
+  expect(natsWrapper.client.publish).toHaveBeenCalledTimes(1);
 
   await request(app)
-    .post(`/api/users/reset-password/${tokenId}`)
+    .post('/api/users/reset-password')
     .send({
-      password: "Pass",
-      repeatPassword: "Pass",
+      email: 'testy@test.com',
     })
-    .expect(400);
-});
+    .expect(201);
 
-it("returns a 400 if both passwords dont match", async () => {
-  const tokenId = new mongoose.Types.ObjectId().toHexString();
-
-  await request(app)
-    .post(`/api/users/reset-password/${tokenId}`)
-    .send({
-      password: "Passw0rd",
-      repeatPassword: "Pass",
-    })
-    .expect(400);
-});
-
-it("returns a 404 if the token is not found", async () => {
-  const tokenId = new mongoose.Types.ObjectId().toHexString();
-
-  await request(app)
-    .post(`/api/users/reset-password/${tokenId}`)
-    .send({
-      password: "Passw0rd",
-      repeatPassword: "Passw0rd",
-    })
-    .expect(404);
-});
-
-it("returns a 200 if the password was changed succesfully", async () => {
-  const token = await global.signup();
-
-  const cookie = await global.userVerify(token);
-
-  const response = await request(app)
-    .get(`/api/users/currentuser`)
-    .set("Cookie", cookie)
-    .send()
-    .expect(200);
-
-  const resetToken = Token.build({
-    id: new mongoose.Types.ObjectId().toHexString(),
-    value: crypto.randomBytes(32).toString("hex"),
-    createdAt: new Date(),
-    expiresAt: new Date(),
-    userId: response.body.currentUser.id,
-    purpose: TokenPurpose.PASSWORD_RESET,
-    usable: true,
-  });
-  await resetToken.save();
-
-  await request(app)
-    .post(`/api/users/reset-password/${resetToken.value}`)
-    .send({
-      password: "Passw0rdUpdated",
-      repeatPassword: "Passw0rdUpdated",
-    })
-    .expect(200);
-
-  await request(app)
-    .post("/api/users/signin")
-    .send({
-      identifier: "testy@test.com",
-      password: "Passw0rdUpdated",
-    })
-    .expect(200);
-});
-
-it("returns a 400 if the token is not usable", async () => {
-  const token = await global.signup();
-
-  const cookie = await global.userVerify(token);
-
-  const response = await request(app)
-    .get(`/api/users/currentuser`)
-    .set("Cookie", cookie)
-    .send()
-    .expect(200);
-
-  const resetToken = await Token.build({
-    id: new mongoose.Types.ObjectId().toHexString(),
-    value: crypto.randomBytes(32).toString("hex"),
-    createdAt: new Date(),
-    expiresAt: new Date(),
-    userId: response.body.currentUser.id,
-    purpose: TokenPurpose.PASSWORD_RESET,
-    usable: false,
-  });
-  await resetToken.save();
-  resetToken.usable = false;
-  await resetToken.save();
-
-  await request(app)
-    .post(`/api/users/reset-password/${resetToken.value}`)
-    .send({
-      password: "Passw0rdUpdated",
-      repeatPassword: "Passw0rdUpdated",
-    })
-    .expect(400);
-});
-
-it("publishes a token:used event", async () => {
-  const token = await global.signup();
-
-  const cookie = await global.userVerify(token);
-
-  const response = await request(app)
-    .get(`/api/users/currentuser`)
-    .set("Cookie", cookie)
-    .send()
-    .expect(200);
-
-  const resetToken = Token.build({
-    id: new mongoose.Types.ObjectId().toHexString(),
-    value: crypto.randomBytes(32).toString("hex"),
-    createdAt: new Date(),
-    expiresAt: new Date(),
-    userId: response.body.currentUser.id,
-    purpose: TokenPurpose.PASSWORD_RESET,
-    usable: true,
-  });
-  await resetToken.save();
-
-  await request(app)
-    .post(`/api/users/reset-password/${resetToken.value}`)
-    .send({
-      password: "Passw0rdUpdated",
-      repeatPassword: "Passw0rdUpdated",
-    })
-    .expect(200);
-
-  expect(natsWrapper.client.publish).toHaveBeenCalled();
+  expect(natsWrapper.client.publish).toHaveBeenCalledTimes(2);
 });

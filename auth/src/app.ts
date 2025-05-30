@@ -8,10 +8,11 @@ import { currentUserRouter } from './routes/current-user';
 import { signinRouter } from './routes/signin';
 import { signupRouter } from './routes/signup';
 import { signoutRouter } from './routes/signout';
-import { verifyAccountRouter } from './routes/verify-account';
-import { sendVerificationEmailRouter } from './routes/send-verification-email';
-import { forgotPasswordRouter } from './routes/forgot-password';
+import { verifyRouter } from './routes/verify';
+import { sendVerificationRouter } from './routes/send-verification';
 import { resetPasswordRouter } from './routes/reset-password';
+import { changePasswordRouter } from './routes/change-password';
+import { updateRouter } from './routes/update';
 
 import { errorHandler, NotFoundError } from '@greenhive/common';
 
@@ -31,10 +32,11 @@ app.use(currentUserRouter);
 app.use(signinRouter);
 app.use(signupRouter);
 app.use(signoutRouter);
-app.use(verifyAccountRouter);
-app.use(forgotPasswordRouter);
+app.use(verifyRouter);
+app.use(changePasswordRouter);
 app.use(resetPasswordRouter);
-app.use(sendVerificationEmailRouter);
+app.use(sendVerificationRouter);
+app.use(updateRouter);
 
 app.all('*', async (req, res) => {
   throw new NotFoundError();

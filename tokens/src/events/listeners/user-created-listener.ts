@@ -1,15 +1,15 @@
-import { Message } from "node-nats-streaming";
-import crypto from "crypto";
+import { Message } from 'node-nats-streaming';
+import crypto from 'crypto';
 
 import {
   Subjects,
   Listener,
   UserCreatedEvent,
   TokenPurpose,
-} from "@greenhive/common";
-import { Token } from "../../models/token";
-import { TokenCreatedPublisher } from "../publishers/token-created-publisher";
-import { queueGroupName } from "./queue-group-name";
+} from '@greenhive/common';
+import { Token } from '../../models/token';
+import { TokenCreatedPublisher } from '../publishers/token-created-publisher';
+import { queueGroupName } from '../queue-group-name';
 
 const EXPIRATION_WINDOW_MINUTES = 15;
 
@@ -17,9 +17,9 @@ export class UserCreatedListener extends Listener<UserCreatedEvent> {
   readonly subject = Subjects.UserCreated;
   queueGroupName = queueGroupName;
 
-  async onMessage(data: UserCreatedEvent["data"], msg: Message) {
+  async onMessage(data: UserCreatedEvent['data'], msg: Message) {
     // Crear y guardar nuevo token
-    const tokenValue = crypto.randomBytes(32).toString("hex");
+    const tokenValue = crypto.randomBytes(32).toString('hex');
     const now = new Date();
     const expiration = new Date(
       now.getTime() + EXPIRATION_WINDOW_MINUTES * 60 * 1000

@@ -13,7 +13,7 @@ import { natsWrapper } from '../nats-wrapper';
 const router = express.Router();
 
 router.post(
-  '/api/users/send-verification-email',
+  '/api/users/send-verification',
   [body('email').isEmail().withMessage('Email must be valid')],
   validateRequest,
   async (req: Request, res: Response) => {
@@ -37,11 +37,11 @@ router.post(
       firstName: user.firstName,
       lastName: user.lastName,
       username: user.username,
-      email: user.email
-    })
+      email: user.email,
+    });
 
     res.status(201).send();
   }
 );
 
-export { router as sendVerificationEmailRouter };
+export { router as sendVerificationRouter };

@@ -1,23 +1,23 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
-import { z } from "zod";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useRouter } from "next/navigation";
+import { useEffect, useState } from 'react';
+import { z } from 'zod';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useRouter } from 'next/navigation';
 
-import useRequest from "../../../../hooks/use-request";
-import InputField from "../../../../components/forms/InputField";
-import { CheckboxField as SessionCheckbox } from "../../../../components/forms/CheckboxField";
-import PasswordField from "@/components/forms/PasswordField";
-import Link from "next/link";
+import useRequest from '../../../../hooks/use-request';
+import InputField from '../../../../components/forms/InputField';
+import { CheckboxField as SessionCheckbox } from '../../../../components/forms/CheckboxField';
+import PasswordField from '@/components/forms/PasswordField';
+import Link from 'next/link';
 
 /* VERIFICATION SCHEMA */
 const schema = z.object({
   identifier: z
     .string()
-    .nonempty({ message: "Email or username must be valid" }),
-  password: z.string().nonempty({ message: "Password must be provided" }),
+    .nonempty({ message: 'Email or username must be valid' }),
+  password: z.string().nonempty({ message: 'Password must be provided' }),
   sessionCheckbox: z.boolean().optional(),
 });
 
@@ -25,12 +25,12 @@ type Inputs = z.infer<typeof schema>;
 
 const SigninForm = ({ data }: { data: any }) => {
   const router = useRouter();
-  const [error, setError] = useState("");
-  const [visibleError, setVisibleError] = useState("");
+  const [error, setError] = useState('');
+  const [visibleError, setVisibleError] = useState('');
   const { doRequest, errors: requestErrors } = useRequest({
-    url: "/api/users/signin",
-    method: "post",
-    onSuccess: () => router.push("/"),
+    url: '/api/users/signin',
+    method: 'post',
+    onSuccess: () => router.push('/'),
   });
 
   const {
@@ -42,9 +42,9 @@ const SigninForm = ({ data }: { data: any }) => {
   });
 
   useEffect(() => {
-    if (requestErrors && typeof requestErrors === "string") {
+    if (requestErrors && typeof requestErrors === 'string') {
       setVisibleError(requestErrors);
-      const timer = setTimeout(() => setVisibleError(""), 4000);
+      const timer = setTimeout(() => setVisibleError(''), 4000);
       return () => clearTimeout(timer);
     }
   }, [requestErrors]);
@@ -87,7 +87,10 @@ const SigninForm = ({ data }: { data: any }) => {
             register={register}
             error={errors.sessionCheckbox}
           />
-          <Link href="/reset-password" className="underline text-sm text-white">
+          <Link
+            href="/reset-password"
+            className="underline text-sm text-white text-end"
+          >
             Forgot your Password?
           </Link>
         </div>

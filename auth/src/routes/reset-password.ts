@@ -1,65 +1,36 @@
 import express, { Request, Response } from 'express';
 import { body } from 'express-validator';
+import crypto from 'crypto';
 
-import {
-  validateRequest,
-  BadRequestError,
-  NotFoundError,
-} from '@greenhive/common';
-import { Token } from '../models/token';
 import { User } from '../models/user';
+import { ForgotPasswordPublisher } from '../events/publishers/forgot-password-publisher';
 import { natsWrapper } from '../nats-wrapper';
-import { TokenUsedPublisher } from '../events/publishers/token-used-publisher';
+import { validateRequest, BadRequestError } from '@greenhive/common';
 
 const router = express.Router();
 
 router.post(
-  '/api/users/reset-password/:id',
-  [
-    body('password')
-      .trim()
-      .isLength({ min: 8, max: 20 })
-      .withMessage('Password must have more than 8 characters')
-      .matches(/\d/)
-      .withMessage('Password must contain a number')
-      .matches(/[A-Z]/)
-      .withMessage('Password must contain an uppercase letter'),
-    body('repeatPassword').custom((value, { req }) => {
-      if (value !== req.body.password) {
-        throw new Error('Passwords do not match');
-      }
-      return true;
-    }),
-  ],
+  '/api/users/reset-password',
+  [body('email').isEmail().withMessage('Email must be valid')],
   validateRequest,
   async (req: Request, res: Response) => {
-    // Obtener el valor del token de la petición
-    const tokenValue = req.params.id;
-    const token = await Token.findOne({ value: tokenValue });
+    const { email } = req.body;
 
-    // Chequear si el token ha sido usado
-    if (!token) {
-      throw new NotFoundError();
-    }
-    console.log(token.value);
-    if (!token.usable) {
-      throw new BadRequestError('Token already used or expired');
-    }
+    const user = await User.findOne({ email });
 
-    // Encontrar el usuario y actualizar la contraseña
-    const user = await User.findById(token.userId);
     if (!user) {
-      throw new BadRequestError("Token doesn't belong to a user");
+      throw new BadRequestError('No user with that email');
     }
-    user.password = req.body.password;
-    await user.save();
 
-    // Publicar el evento de uso de token
-    new TokenUsedPublisher(natsWrapper.client).publish({
-      value: token.value,
+    // Publicar el evento de contraseña olvidada para crear el token y enviar el correo
+    new ForgotPasswordPublisher(natsWrapper.client).publish({
+      id: user.id,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
     });
 
-    res.status(200).send({ user });
+    res.status(201).send();
   }
 );
 

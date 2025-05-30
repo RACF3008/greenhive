@@ -1,20 +1,20 @@
-import { Message } from "node-nats-streaming";
+import { Message } from 'node-nats-streaming';
 
 import {
   Subjects,
   Listener,
   TokenExpiredEvent,
   NotFoundError,
-} from "@greenhive/common";
-import { Token } from "../../models/token";
-import { TokenUpdatedPublisher } from "../publishers/token-updated-publisher";
-import { queueGroupName } from "./queue-group-name";
+} from '@greenhive/common';
+import { Token } from '../../models/token';
+import { TokenUpdatedPublisher } from '../publishers/token-updated-publisher';
+import { queueGroupName } from '../queue-group-name';
 
 export class TokenExpiredListener extends Listener<TokenExpiredEvent> {
   readonly subject = Subjects.TokenExpired;
   queueGroupName = queueGroupName;
 
-  async onMessage(data: TokenExpiredEvent["data"], msg: Message) {
+  async onMessage(data: TokenExpiredEvent['data'], msg: Message) {
     // Buscar, actualizar y guardar el token
     const token = await Token.findOne({ value: data.value });
     if (!token) {
