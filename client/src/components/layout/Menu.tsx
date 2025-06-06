@@ -21,18 +21,18 @@ const menuItems = [
         icon: <HomeFilledIcon />,
         visible: ['admin', 'operator', 'viewer'],
       },
-      // {
-      //   label: 'Hives',
-      //   href: '/list/hives',
-      //   icon: (
-      //     <span className="h-6 w-6">
-      //       <HiveIcon />
-      //     </span>
-      //   ),
-      //   visible: ['super-admin', 'admin', 'operator', 'viewer'],
-      // },
       {
-        label: 'Devices',
+        label: 'Clusters',
+        href: '/clusters/list',
+        icon: (
+          <span className="h-6 w-6">
+            <HiveIcon />
+          </span>
+        ),
+        visible: ['super-admin', 'admin', 'operator', 'viewer'],
+      },
+      {
+        label: 'All Devices',
         href: '/devices/list',
         icon: (
           <span className="h-6 w-6">
