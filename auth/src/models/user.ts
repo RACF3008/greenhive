@@ -1,8 +1,9 @@
-import mongoose from 'mongoose';
-import { updateIfCurrentPlugin } from 'mongoose-update-if-current';
+import mongoose from "mongoose";
+import { updateIfCurrentPlugin } from "mongoose-update-if-current";
 
-import { Password } from '../services/password';
-import { TeamRoles } from '@greenhive/common';
+import { Password } from "../services/password";
+import { TeamRoles } from "@greenhive/common";
+import { StringLiteral } from "typescript";
 
 interface UserAttrs {
   firstName: string;
@@ -10,8 +11,8 @@ interface UserAttrs {
   username: string;
   email: string;
   password: string;
-  verified: boolean;
-  role?: TeamRoles;
+  profileImage?: string;
+  lastLoginAt: Date;
 }
 
 interface UserModel extends mongoose.Model<UserDoc> {
@@ -24,8 +25,9 @@ interface UserDoc extends mongoose.Document {
   username: string;
   email: string;
   password: string;
+  profileImage?: string;
   verified: boolean;
-  role: TeamRoles;
+  lastLoginAt: Date;
   version: number;
 }
 
@@ -42,28 +44,33 @@ const userSchema = new mongoose.Schema(
     email: {
       type: String,
       required: true,
+      unique: true,
+    },
+    username: {
+      type: String,
+      required: true,
+      unique: true,
     },
     password: {
       type: String,
       required: true,
     },
-    username: {
+    profileImage: {
       type: String,
-      required: true,
+      required: false,
     },
     verified: {
       type: Boolean,
       required: true,
       default: false,
     },
-    role: {
-      type: String,
+    lastLoginAt: {
+      type: Date,
       required: true,
-      enum: Object.values(TeamRoles),
-      default: TeamRoles.VIEWER,
     },
   },
   {
+    timestamps: true,
     toJSON: {
       transform(doc, ret) {
         ret.id = ret._id;
@@ -75,21 +82,24 @@ const userSchema = new mongoose.Schema(
   }
 );
 
-userSchema.pre('save', async function (done) {
-  if (this.isModified('password')) {
-    const hashed = await Password.toHash(this.get('password'));
-    this.set('password', hashed);
+userSchema.pre<UserDoc>("save", async function () {
+  if (this.isModified("password")) {
+    const hashed = await Password.toHash(this.get("password"));
+    this.set("password", hashed);
   }
-  done();
+
+  if (this.isNew) {
+    this.set("verified", false);
+  }
 });
 
-userSchema.set('versionKey', 'version');
+userSchema.set("versionKey", "version");
 userSchema.plugin(updateIfCurrentPlugin);
 
 userSchema.statics.build = (attrs: UserAttrs) => {
   return new User(attrs);
 };
 
-const User = mongoose.model<UserDoc, UserModel>('User', userSchema);
+const User = mongoose.model<UserDoc, UserModel>("User", userSchema);
 
 export { User };
