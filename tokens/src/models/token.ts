@@ -1,13 +1,9 @@
 import mongoose from "mongoose";
-import { updateIfCurrentPlugin } from "mongoose-update-if-current";
 
 interface TokenAttrs {
   value: string;
-  createdAt: Date;
-  expiresAt: Date;
-  userId?: string;
+  userId: string;
   purpose: string;
-  usable: boolean;
 }
 
 interface TokenModel extends mongoose.Model<TokenDoc> {
@@ -16,11 +12,11 @@ interface TokenModel extends mongoose.Model<TokenDoc> {
 
 interface TokenDoc extends mongoose.Document {
   value: string;
-  userId?: string;
-  createdAt: Date;
-  expiresAt: Date;
+  userId: string;
   purpose: string;
-  usable: boolean;
+  expiresAt: Date;
+  isUsable: boolean;
+  createdAt: Date;
 }
 
 const tokenSchema = new mongoose.Schema(
@@ -31,27 +27,24 @@ const tokenSchema = new mongoose.Schema(
     },
     userId: {
       type: String,
-      required: false,
-    },
-    createdAt: {
-      type: Date,
-      required: true,
-    },
-    expiresAt: {
-      type: Date,
       required: true,
     },
     purpose: {
       type: String,
       required: true,
     },
-    usable: {
+    expiresAt: {
+      type: Date,
+      required: false,
+    },
+    isUsable: {
       type: Boolean,
       required: true,
       default: true,
     },
   },
   {
+    timestamps: true,
     toJSON: {
       transform(doc, ret) {
         ret.id = ret._id;
