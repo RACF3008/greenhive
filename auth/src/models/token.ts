@@ -5,9 +5,10 @@ import { TokenPurpose } from "@greenhive/common";
 interface TokenAttrs {
   id: string;
   value: string;
+  userId: string;
   createdAt: Date;
   expiresAt: Date;
-  userId: string;
+
   purpose: TokenPurpose;
 }
 
