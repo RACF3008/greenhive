@@ -11,8 +11,6 @@ interface UserAttrs {
   username: string;
   email: string;
   password: string;
-  profileImage?: string;
-  version?: number;
 }
 
 interface UserModel extends mongoose.Model<UserDoc> {
