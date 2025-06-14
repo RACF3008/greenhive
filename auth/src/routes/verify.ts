@@ -1,15 +1,15 @@
-import express, { Request, Response } from 'express';
+import express, { Request, Response } from "express";
 
-import { Token } from '../models/token';
-import { User } from '../models/user';
-import { BadRequestError, NotFoundError } from '@greenhive/common';
-import { TokenUsedPublisher } from '../events/publishers/token-used-publisher';
-import { natsWrapper } from '../nats-wrapper';
-import { UserUpdatedPublisher } from '../events/publishers/user-updated-publisher';
+import { Token } from "../models/token";
+import { User } from "../models/user";
+import { BadRequestError, NotFoundError } from "@greenhive/common";
+import { UserTokenUsedPublisher } from "../events/publishers/user-token-used-publisher";
+import { natsWrapper } from "../nats-wrapper";
+import { UserUpdatedPublisher } from "../events/publishers/user-updated-publisher";
 
 const router = express.Router();
 
-router.post('/api/users/verify/:id', async (req: Request, res: Response) => {
+router.post("/api/users/verify/:id", async (req: Request, res: Response) => {
   // Obtener el valor del token de la URL
   const tokenValue = req.params.id;
   const token = await Token.findOne({ value: tokenValue });
@@ -18,8 +18,8 @@ router.post('/api/users/verify/:id', async (req: Request, res: Response) => {
   if (!token) {
     throw new NotFoundError();
   }
-  if (!token.usable) {
-    throw new BadRequestError('Token already used or expired');
+  if (!token.isUsable) {
+    throw new BadRequestError("Token already used or expired");
   }
 
   // Encontrar si hay algún usuario asociado al token
@@ -34,16 +34,18 @@ router.post('/api/users/verify/:id', async (req: Request, res: Response) => {
   // Anunciar actualización de usuario
   new UserUpdatedPublisher(natsWrapper.client).publish({
     id: user.id,
-    version: user.version,
     firstName: user.firstName,
     lastName: user.lastName,
     username: user.username,
     email: user.email,
     verified: user.verified,
+    updatedAt: user.updatedAt,
+    version: user.version,
   });
 
   // Anunciar que el token ha sido utilizado
-  new TokenUsedPublisher(natsWrapper.client).publish({
+  new UserTokenUsedPublisher(natsWrapper.client).publish({
+    id: token.id,
     value: token.value,
   });
 

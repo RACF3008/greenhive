@@ -12,7 +12,7 @@ interface UserAttrs {
   email: string;
   password: string;
   profileImage?: string;
-  lastLoginAt: Date;
+  version?: number;
 }
 
 interface UserModel extends mongoose.Model<UserDoc> {
@@ -27,6 +27,8 @@ interface UserDoc extends mongoose.Document {
   password: string;
   profileImage?: string;
   verified: boolean;
+  createdAt: Date;
+  updatedAt: Date;
   lastLoginAt: Date;
   version: number;
 }
@@ -61,12 +63,12 @@ const userSchema = new mongoose.Schema(
     },
     verified: {
       type: Boolean,
-      required: true,
+      required: false,
       default: false,
     },
     lastLoginAt: {
       type: Date,
-      required: true,
+      required: false,
     },
   },
   {

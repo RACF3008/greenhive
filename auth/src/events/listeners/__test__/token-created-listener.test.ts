@@ -17,17 +17,17 @@ const setup = async () => {
     username: "Testy2024",
     password: "Passw0rd",
     email: "testy@test.com",
-    verified: false,
   });
   await user.save();
 
   const data: TokenCreatedEvent["data"] = {
     id: new mongoose.Types.ObjectId().toHexString(),
     value: crypto.randomBytes(32).toString("hex"),
+    userId: user.id,
+    purpose: TokenPurpose.USER_AUTHENTICATION,
     createdAt: new Date(),
     expiresAt: new Date(),
-    purpose: TokenPurpose.USER_AUTHENTICATION,
-    userId: user.id,
+    isUsable: true,
   };
 
   // @ts-ignore

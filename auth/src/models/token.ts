@@ -9,7 +9,6 @@ interface TokenAttrs {
   expiresAt: Date;
   userId: string;
   purpose: TokenPurpose;
-  usable: boolean;
 }
 
 interface TokenModel extends mongoose.Model<TokenDoc> {
@@ -23,7 +22,7 @@ interface TokenDoc extends mongoose.Document {
   createdAt: Date;
   expiresAt: Date;
   purpose: TokenPurpose;
-  usable: boolean;
+  isUsable: boolean;
 }
 
 const tokenSchema = new mongoose.Schema(
@@ -53,7 +52,7 @@ const tokenSchema = new mongoose.Schema(
       required: true,
       enum: Object.values(TokenPurpose),
     },
-    usable: {
+    isUsable: {
       type: Boolean,
       default: true,
     },

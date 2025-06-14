@@ -7,9 +7,8 @@ it("implements optimistic concurrency control", async () => {
     firstName: "Testy",
     lastName: "GreenHive",
     username: "Testy2024",
-    password: "Passw0rd",
     email: "testy@test.com",
-    verified: false,
+    password: "Passw0rd",
   });
 
   await user.save();
@@ -36,9 +35,8 @@ it("increments version number on save", async () => {
     firstName: "Testy",
     lastName: "GreenHive",
     username: "Testy2024",
-    password: "Passw0rd",
     email: "testy@test.com",
-    verified: false,
+    password: "Passw0rd",
   });
 
   await user.save();
@@ -49,4 +47,31 @@ it("increments version number on save", async () => {
 
   await user.save();
   expect(user.version).toEqual(2);
+});
+
+it("fills the createdAt and updatedAt attributes automatically", async () => {
+  const user = User.build({
+    firstName: "Testy",
+    lastName: "GreenHive",
+    username: "Testy2024",
+    email: "testy@test.com",
+    password: "Passw0rd",
+  });
+  await user.save();
+  expect(user.createdAt).toBeDefined();
+
+  await user.save();
+  expect(user.updatedAt).toBeDefined();
+});
+
+it("sets the attribute 'verified' as false when created", async () => {
+  const user = User.build({
+    firstName: "Testy",
+    lastName: "GreenHive",
+    username: "Testy2024",
+    email: "testy@test.com",
+    password: "Passw0rd",
+  });
+  await user.save();
+  expect(user.verified).toBeFalsy();
 });

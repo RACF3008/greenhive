@@ -1,32 +1,32 @@
-import express, { Request, Response } from 'express';
-import { body } from 'express-validator';
+import express, { Request, Response } from "express";
+import { body } from "express-validator";
 
 import {
   validateRequest,
   BadRequestError,
   NotFoundError,
-} from '@greenhive/common';
-import { Token } from '../models/token';
-import { User } from '../models/user';
-import { natsWrapper } from '../nats-wrapper';
-import { TokenUsedPublisher } from '../events/publishers/token-used-publisher';
+} from "@greenhive/common";
+import { Token } from "../models/token";
+import { User } from "../models/user";
+import { natsWrapper } from "../nats-wrapper";
+import { UserTokenUsedPublisher } from "../events/publishers/user-token-used-publisher";
 
 const router = express.Router();
 
 router.post(
-  '/api/users/change-password/:id',
+  "/api/users/change-password/:id",
   [
-    body('password')
+    body("password")
       .trim()
       .isLength({ min: 8, max: 20 })
-      .withMessage('Password must have more than 8 characters')
+      .withMessage("Password must have more than 8 characters")
       .matches(/\d/)
-      .withMessage('Password must contain a number')
+      .withMessage("Password must contain a number")
       .matches(/[A-Z]/)
-      .withMessage('Password must contain an uppercase letter'),
-    body('repeatPassword').custom((value, { req }) => {
+      .withMessage("Password must contain an uppercase letter"),
+    body("repeatPassword").custom((value, { req }) => {
       if (value !== req.body.password) {
-        throw new Error('Passwords do not match');
+        throw new Error("Passwords do not match");
       }
       return true;
     }),
@@ -42,8 +42,8 @@ router.post(
       throw new NotFoundError();
     }
     console.log(token.value);
-    if (!token.usable) {
-      throw new BadRequestError('Token already used or expired');
+    if (!token.isUsable) {
+      throw new BadRequestError("Token already used or expired");
     }
 
     // Encontrar el usuario y actualizar la contraseña
@@ -55,7 +55,8 @@ router.post(
     await user.save();
 
     // Publicar el evento de uso de token
-    new TokenUsedPublisher(natsWrapper.client).publish({
+    new UserTokenUsedPublisher(natsWrapper.client).publish({
+      id: token.id,
       value: token.value,
     });
 

@@ -1,17 +1,17 @@
-import express, { Request, Response } from 'express';
-import { body } from 'express-validator';
-import crypto from 'crypto';
+import express, { Request, Response } from "express";
+import { body } from "express-validator";
+import crypto from "crypto";
 
-import { User } from '../models/user';
-import { ForgotPasswordPublisher } from '../events/publishers/forgot-password-publisher';
-import { natsWrapper } from '../nats-wrapper';
-import { validateRequest, BadRequestError } from '@greenhive/common';
+import { User } from "../models/user";
+import { UserResetPasswordPublisher } from "../events/publishers/user-reset-password-publisher";
+import { natsWrapper } from "../nats-wrapper";
+import { validateRequest, BadRequestError } from "@greenhive/common";
 
 const router = express.Router();
 
 router.post(
-  '/api/users/reset-password',
-  [body('email').isEmail().withMessage('Email must be valid')],
+  "/api/users/reset-password",
+  [body("email").isEmail().withMessage("Email must be valid")],
   validateRequest,
   async (req: Request, res: Response) => {
     const { email } = req.body;
@@ -19,15 +19,12 @@ router.post(
     const user = await User.findOne({ email });
 
     if (!user) {
-      throw new BadRequestError('No user with that email');
+      throw new BadRequestError("No user with that email");
     }
 
     // Publicar el evento de contraseña olvidada para crear el token y enviar el correo
-    new ForgotPasswordPublisher(natsWrapper.client).publish({
+    new UserResetPasswordPublisher(natsWrapper.client).publish({
       id: user.id,
-      firstName: user.firstName,
-      lastName: user.lastName,
-      email: user.email,
     });
 
     res.status(201).send();

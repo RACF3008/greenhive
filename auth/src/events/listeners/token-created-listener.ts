@@ -20,7 +20,6 @@ export class TokenCreatedListener extends Listener<TokenCreatedEvent> {
       createdAt: data.createdAt,
       expiresAt: data.expiresAt,
       userId: data.userId,
-      usable: true,
       purpose: data.purpose,
     });
     await token.save();

@@ -1,16 +1,19 @@
-import express from 'express';
+import express from "express";
 
-import { currentUser, NotAuthorizedError } from '@greenhive/common';
+import { currentUser } from "@greenhive/common";
+import { User } from "../models/user";
 
 const router = express.Router();
 
-router.get('/api/users/currentuser', currentUser, (req, res) => {
+router.get("/api/users/currentuser", currentUser, async (req, res) => {
   if (!req.currentUser?.verified) {
     res.send({ currentUser: null });
     return;
   }
 
-  res.send({ currentUser: req.currentUser || null });
+  const user = await User.findById(req.currentUser.id);
+
+  res.send({ currentUser: user || null });
 });
 
 export { router as currentUserRouter };

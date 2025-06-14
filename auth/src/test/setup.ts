@@ -1,25 +1,25 @@
-import { MongoMemoryServer } from 'mongodb-memory-server';
-import mongoose from 'mongoose';
-import request from 'supertest';
-import crypto from 'crypto';
-import jwt from 'jsonwebtoken';
+import { MongoMemoryServer } from "mongodb-memory-server";
+import mongoose from "mongoose";
+import request from "supertest";
+import crypto from "crypto";
+import jwt from "jsonwebtoken";
 
-import { app } from '../app';
-import { Token } from '../models/token';
-import { User } from '../models/user';
-import { TokenPurpose } from '@greenhive/common';
+import { app } from "../app";
+import { Token } from "../models/token";
+import { User } from "../models/user";
+import { TokenPurpose } from "@greenhive/common";
 
 declare global {
   var signup: () => Promise<string>;
   var userVerify: (token: string) => Promise<string[]>;
 }
 
-jest.mock('../nats-wrapper');
+jest.mock("../nats-wrapper");
 
 let mongo: any;
 
 beforeAll(async () => {
-  process.env.JWT_KEY = 'testkey';
+  process.env.JWT_KEY = "testkey";
 
   mongo = await MongoMemoryServer.create();
   const mongoUri = await mongo.getUri();
@@ -47,15 +47,15 @@ afterAll(async () => {
 });
 
 global.signup = async (): Promise<string> => {
-  const email = 'testy@test.com';
-  const firstName = 'Testy';
-  const lastName = 'GreenHive';
-  const username = 'Testy2024';
-  const password = 'Passw0rd';
-  const repeatPassword = 'Passw0rd';
+  const email = "testy@test.com";
+  const firstName = "Testy";
+  const lastName = "GreenHive";
+  const username = "Testy2024";
+  const password = "Passw0rd";
+  const repeatPassword = "Passw0rd";
 
   const userResponse = await request(app)
-    .post('/api/users/signup')
+    .post("/api/users/signup")
     .send({
       email,
       firstName,
@@ -69,10 +69,10 @@ global.signup = async (): Promise<string> => {
   const userId = userResponse.body.id;
 
   if (!userId) {
-    throw new Error('Failed to create user');
+    throw new Error("Failed to create user");
   }
 
-  const tokenValue = crypto.randomBytes(32).toString('hex');
+  const tokenValue = crypto.randomBytes(32).toString("hex");
   const now = new Date();
   const expiration = new Date(now.getTime() + 60 * 1000);
 
@@ -82,7 +82,6 @@ global.signup = async (): Promise<string> => {
     createdAt: now,
     expiresAt: expiration,
     userId: userId,
-    usable: true,
     purpose: TokenPurpose.USER_AUTHENTICATION,
   });
   await token.save();
@@ -95,7 +94,7 @@ global.userVerify = async (token: string): Promise<string[]> => {
 
   const user = await User.findById(verificationToken?.userId);
   if (!user) {
-    throw new Error('User not found for token');
+    throw new Error("User not found for token");
   }
   user.verified = true;
   await user.save();
@@ -103,14 +102,14 @@ global.userVerify = async (token: string): Promise<string[]> => {
   const signinResponse = await request(app)
     .post(`/api/users/signin`)
     .send({
-      identifier: 'testy@test.com',
-      password: 'Passw0rd',
+      identifier: "testy@test.com",
+      password: "Passw0rd",
     })
     .expect(200);
 
-  const cookie = signinResponse.get('Set-Cookie');
+  const cookie = signinResponse.get("Set-Cookie");
   if (!cookie) {
-    throw new Error('Failed to get cookie from response');
+    throw new Error("Failed to get cookie from response");
   }
 
   return cookie;

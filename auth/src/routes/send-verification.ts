@@ -1,20 +1,20 @@
-import express, { Request, Response } from 'express';
-import { body } from 'express-validator';
+import express, { Request, Response } from "express";
+import { body } from "express-validator";
 
 import {
   validateRequest,
   BadRequestError,
   NotFoundError,
-} from '@greenhive/common';
-import { User } from '../models/user';
-import { UserVerifyPublisher } from '../events/publishers/user-verify-publisher';
-import { natsWrapper } from '../nats-wrapper';
+} from "@greenhive/common";
+import { User } from "../models/user";
+import { UserVerifyPublisher } from "../events/publishers/user-verify-publisher";
+import { natsWrapper } from "../nats-wrapper";
 
 const router = express.Router();
 
 router.post(
-  '/api/users/send-verification',
-  [body('email').isEmail().withMessage('Email must be valid')],
+  "/api/users/send-verification",
+  [body("email").isEmail().withMessage("Email must be valid")],
   validateRequest,
   async (req: Request, res: Response) => {
     const { email } = req.body;
@@ -27,17 +27,14 @@ router.post(
 
     // Verificar si el usuario ya ha sido verificado
     if (user.verified) {
-      throw new BadRequestError('User already verified');
+      throw new BadRequestError("User already verified");
     }
 
-    // Publicar un evento de verificación, para que el servicio de
-    // correos lo procese
+    // Publicar un evento de verificación, para que el tokens service
+    // genere un token y lo envíe al mail service para hacerlo llegar
+    // al usuario
     new UserVerifyPublisher(natsWrapper.client).publish({
       id: user.id,
-      firstName: user.firstName,
-      lastName: user.lastName,
-      username: user.username,
-      email: user.email,
     });
 
     res.status(201).send();

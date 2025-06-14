@@ -21,28 +21,25 @@ const setup = async () => {
     username: "Testy2024",
     password: "Passw0rd",
     email: "testy@test.com",
-    verified: false,
   });
   await user.save();
 
-  const value = crypto.randomBytes(32).toString("hex");
+  const tokenId = new mongoose.Types.ObjectId().toHexString();
+  const tokenValue = crypto.randomBytes(32).toString("hex");
   const token = Token.build({
-    id: new mongoose.Types.ObjectId().toHexString(),
-    value,
+    id: tokenId,
+    value: tokenValue,
     createdAt: new Date(),
     expiresAt: new Date(),
     purpose: TokenPurpose.USER_AUTHENTICATION,
     userId: user.id,
-    usable: true,
   });
   await token.save();
 
   const data: TokenUpdatedEvent["data"] = {
-    value,
-    createdAt: new Date(),
-    expiresAt: new Date(),
-    userId: user.id,
-    usable: false,
+    id: tokenId,
+    value: tokenValue,
+    isUsable: false,
   };
 
   // @ts-ignore
@@ -56,7 +53,7 @@ const setup = async () => {
 it("updates a token", async () => {
   const { listener, token, data, msg } = await setup();
 
-  expect(token.usable).toBe(true);
+  expect(token.isUsable).toBe(true);
 
   await listener.onMessage(data, msg);
 
@@ -64,7 +61,7 @@ it("updates a token", async () => {
   if (!updatedToken) {
     throw new NotFoundError();
   }
-  expect(updatedToken.usable).toBe(false);
+  expect(updatedToken.isUsable).toBe(false);
 });
 
 it("acks the message", async () => {
