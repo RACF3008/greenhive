@@ -1,13 +1,10 @@
 import mongoose from "mongoose";
-import { updateIfCurrentPlugin } from "mongoose-update-if-current";
+import { TokenPurpose } from "@greenhive/common";
 
 interface TokenAttrs {
   value: string;
-  createdAt: Date;
-  expiresAt: Date;
-  userId?: string;
-  purpose: string;
-  usable: boolean;
+  userId: string;
+  purpose: TokenPurpose;
 }
 
 interface TokenModel extends mongoose.Model<TokenDoc> {
@@ -16,11 +13,11 @@ interface TokenModel extends mongoose.Model<TokenDoc> {
 
 interface TokenDoc extends mongoose.Document {
   value: string;
-  userId?: string;
-  createdAt: Date;
+  userId: string;
+  purpose: TokenPurpose;
   expiresAt: Date;
-  purpose: string;
-  usable: boolean;
+  isUsable: boolean;
+  createdAt: Date;
 }
 
 const tokenSchema = new mongoose.Schema(
@@ -31,40 +28,54 @@ const tokenSchema = new mongoose.Schema(
     },
     userId: {
       type: String,
-      required: false,
-    },
-    createdAt: {
-      type: Date,
-      required: true,
-    },
-    expiresAt: {
-      type: Date,
       required: true,
     },
     purpose: {
       type: String,
       required: true,
+      enum: Object.values(TokenPurpose),
     },
-    usable: {
+    expiresAt: {
+      type: Date,
+      required: false,
+    },
+    isUsable: {
       type: Boolean,
       required: true,
       default: true,
     },
   },
   {
+    timestamps: true,
     toJSON: {
       transform(doc, ret) {
         ret.id = ret._id;
         delete ret._id;
-        delete ret.__v;
       },
     },
   }
 );
 
-tokenSchema.pre("save", function (next) {
+// Define expiration times (in minutes) depending on purpose
+const EXPIRATION_TIMES: Record<TokenPurpose, number> = {
+  [TokenPurpose.USER_AUTHENTICATION]: 10,
+  [TokenPurpose.PASSWORD_RESET]: 10,
+  // Si agregas más valores en el enum, TypeScript te obligará a agregarlos aquí
+};
+
+tokenSchema.pre<TokenDoc>("save", function (next) {
   if (this.isNew) {
     this.set("usable", true);
+  }
+
+  const expirationTime = EXPIRATION_TIMES[this.purpose];
+  if (expirationTime) {
+    this.set(
+      "expiresAt",
+      new Date(this.createdAt.getTime() + expirationTime * 60 * 1000)
+    );
+  } else {
+    this.set("expiresAt", new Date(this.createdAt.getTime() + 10 * 60 * 1000));
   }
 
   next();

@@ -23,7 +23,7 @@ interface UserDoc extends mongoose.Document {
   username: string;
   email: string;
   password: string;
-  profileImage?: string;
+  profileImage: string;
   verified: boolean;
   createdAt: Date;
   updatedAt: Date;

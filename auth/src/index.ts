@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 import { app } from "./app";
 import { natsWrapper } from "./nats-wrapper";
 import { TokenCreatedListener } from "./events/listeners/token-created-listener";
-import { TokenUpdatedListener } from "./events/listeners/token-updated-listener";
+import { TokenUpdatedListener } from "./events/listeners/token-revoked-listener";
 
 const start = async () => {
   console.log("Starting up...");
