@@ -3,17 +3,17 @@ import crypto from "crypto";
 import { Message } from "node-nats-streaming";
 
 import {
-  TokenUpdatedEvent,
+  TokenRevokedEvent,
   TokenPurpose,
   NotFoundError,
 } from "@greenhive/common";
-import { TokenUpdatedListener } from "../token-updated-listener";
+import { TokenRevokedListener } from "../token-revoked-listener";
 import { natsWrapper } from "../../../nats-wrapper";
 import { User } from "../../../models/user";
 import { Token } from "../../../models/token";
 
 const setup = async () => {
-  const listener = new TokenUpdatedListener(natsWrapper.client);
+  const listener = new TokenRevokedListener(natsWrapper.client);
 
   const user = User.build({
     firstName: "Testy",
@@ -36,10 +36,8 @@ const setup = async () => {
   });
   await token.save();
 
-  const data: TokenUpdatedEvent["data"] = {
+  const data: TokenRevokedEvent["data"] = {
     id: tokenId,
-    value: tokenValue,
-    isUsable: false,
   };
 
   // @ts-ignore

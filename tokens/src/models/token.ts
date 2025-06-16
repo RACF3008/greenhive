@@ -1,9 +1,10 @@
 import mongoose from "mongoose";
+import { TokenPurpose } from "@greenhive/common";
 
 interface TokenAttrs {
   value: string;
   userId: string;
-  purpose: string;
+  purpose: TokenPurpose;
 }
 
 interface TokenModel extends mongoose.Model<TokenDoc> {
@@ -13,7 +14,7 @@ interface TokenModel extends mongoose.Model<TokenDoc> {
 interface TokenDoc extends mongoose.Document {
   value: string;
   userId: string;
-  purpose: string;
+  purpose: TokenPurpose;
   expiresAt: Date;
   isUsable: boolean;
   createdAt: Date;
@@ -32,6 +33,7 @@ const tokenSchema = new mongoose.Schema(
     purpose: {
       type: String,
       required: true,
+      enum: Object.values(TokenPurpose),
     },
     expiresAt: {
       type: Date,
@@ -49,15 +51,31 @@ const tokenSchema = new mongoose.Schema(
       transform(doc, ret) {
         ret.id = ret._id;
         delete ret._id;
-        delete ret.__v;
       },
     },
   }
 );
 
-tokenSchema.pre("save", function (next) {
+// Define expiration times (in minutes) depending on purpose
+const EXPIRATION_TIMES: Record<TokenPurpose, number> = {
+  [TokenPurpose.USER_AUTHENTICATION]: 10,
+  [TokenPurpose.PASSWORD_RESET]: 10,
+  // Si agregas más valores en el enum, TypeScript te obligará a agregarlos aquí
+};
+
+tokenSchema.pre<TokenDoc>("save", function (next) {
   if (this.isNew) {
     this.set("usable", true);
+  }
+
+  const expirationTime = EXPIRATION_TIMES[this.purpose];
+  if (expirationTime) {
+    this.set(
+      "expiresAt",
+      new Date(this.createdAt.getTime() + expirationTime * 60 * 1000)
+    );
+  } else {
+    this.set("expiresAt", new Date(this.createdAt.getTime() + 10 * 60 * 1000));
   }
 
   next();

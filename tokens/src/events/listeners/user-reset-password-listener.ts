@@ -4,42 +4,37 @@ import crypto from "crypto";
 import {
   Subjects,
   Listener,
-  UserCreatedEvent,
+  UserResetPasswordEvent,
   TokenPurpose,
 } from "@greenhive/common";
 import { Token } from "../../models/token";
 import { TokenCreatedPublisher } from "../publishers/token-created-publisher";
 import { queueGroupName } from "../queue-group-name";
 
-const EXPIRATION_WINDOW_MINUTES = 15;
+const EXPIRATION_WINDOW_SECONDS = 5 * 60;
 
-export class UserCreatedListener extends Listener<UserCreatedEvent> {
-  readonly subject = Subjects.UserCreated;
+export class UserResetPasswordListener extends Listener<UserResetPasswordEvent> {
+  readonly subject = Subjects.UserResetPassword;
   queueGroupName = queueGroupName;
 
-  async onMessage(data: UserCreatedEvent["data"], msg: Message) {
+  async onMessage(data: UserResetPasswordEvent["data"], msg: Message) {
     // Crear y guardar nuevo token
     const tokenValue = crypto.randomBytes(32).toString("hex");
     const token = Token.build({
       value: tokenValue,
       userId: data.id,
-      purpose: TokenPurpose.USER_AUTHENTICATION,
+      purpose: TokenPurpose.PASSWORD_RESET,
     });
-    await token.save();
-
-    token.expiresAt = new Date(
-      token.createdAt.getTime() + EXPIRATION_WINDOW_MINUTES * 60 * 1000
-    );
     await token.save();
 
     // Publicar la información del nuevo token creado
     await new TokenCreatedPublisher(this.client).publish({
       id: token.id,
       value: tokenValue,
-      userId: data.id,
-      purpose: TokenPurpose.USER_AUTHENTICATION,
       createdAt: token.createdAt,
       expiresAt: token.expiresAt,
+      purpose: TokenPurpose.PASSWORD_RESET,
+      userId: data.id,
       isUsable: token.isUsable,
     });
 

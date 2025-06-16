@@ -8,7 +8,6 @@ interface TokenAttrs {
   userId: string;
   createdAt: Date;
   expiresAt: Date;
-
   purpose: TokenPurpose;
 }
 

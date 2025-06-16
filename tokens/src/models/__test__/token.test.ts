@@ -17,7 +17,7 @@ it("builds a token", async () => {
   expect(tokenDoc).toBeDefined();
 });
 
-it("fills the createdAt attribute automatically", async () => {
+it("fills the createdAt and expiresAt attributes automatically", async () => {
   const token = Token.build({
     value: crypto.randomBytes(32).toString("hex"),
     userId: new mongoose.Types.ObjectId().toHexString(),
@@ -26,6 +26,7 @@ it("fills the createdAt attribute automatically", async () => {
   await token.save();
 
   expect(token.createdAt).toBeDefined();
+  expect(token.expiresAt).toBeDefined();
 });
 
 it("sets the attribute 'isUsable' as true when created", async () => {
