@@ -1,9 +1,10 @@
-import { UserResetPasswordEvent } from "@greenhive/common";
-import { natsWrapper } from "../../../nats-wrapper";
-import { UserResetPasswordListener } from "../user-reset-password-listener";
 import mongoose from "mongoose";
 import { Message } from "node-nats-streaming";
+
+import { UserResetPasswordEvent } from "@greenhive/common";
+import { natsWrapper } from "../../../nats-wrapper";
 import { Token } from "../../../models/token";
+import { UserResetPasswordListener } from "../user-reset-password-listener";
 
 const setup = async () => {
   const listener = new UserResetPasswordListener(natsWrapper.client);
