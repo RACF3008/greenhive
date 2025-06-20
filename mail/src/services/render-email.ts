@@ -2,7 +2,11 @@ import fs from "fs";
 import path from "path";
 
 export const renderEmail = (variables: Record<string, string>) => {
-  const templatePath = path.join(__dirname, "../templates/single-action.html");
+  const templatePath = path.join(
+    __dirname,
+    "../templates/",
+    variables.templateName
+  );
   let template = fs.readFileSync(templatePath, "utf-8");
 
   for (const [key, value] of Object.entries(variables)) {
