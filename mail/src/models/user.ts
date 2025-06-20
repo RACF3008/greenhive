@@ -1,5 +1,4 @@
-import mongoose from 'mongoose';
-import { updateIfCurrentPlugin } from 'mongoose-update-if-current';
+import mongoose from "mongoose";
 
 interface UserAttrs {
   id: string;
@@ -51,9 +50,6 @@ const userSchema = new mongoose.Schema(
   }
 );
 
-userSchema.set('versionKey', 'version');
-userSchema.plugin(updateIfCurrentPlugin);
-
 userSchema.statics.build = (attrs: UserAttrs) => {
   return new User({
     _id: attrs.id,
@@ -64,6 +60,6 @@ userSchema.statics.build = (attrs: UserAttrs) => {
   });
 };
 
-const User = mongoose.model<UserDoc, UserModel>('User', userSchema);
+const User = mongoose.model<UserDoc, UserModel>("User", userSchema);
 
 export { User };
