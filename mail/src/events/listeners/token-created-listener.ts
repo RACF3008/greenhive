@@ -35,8 +35,7 @@ export class TokenCreatedListener extends Listener<TokenCreatedEvent> {
       templateName: "single-action.html",
     };
 
-    // let header = "";
-    // let body = "<h1>Hi, " + user.firstName + " " + user.lastName + "</h1>";
+    // Definir el contenido del correo dependiendo del proposito
     switch (data.purpose) {
       case TokenPurpose.USER_AUTHENTICATION:
         emailData = {
