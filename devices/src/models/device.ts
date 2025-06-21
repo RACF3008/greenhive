@@ -6,10 +6,12 @@ import { TowerPayload, WeatherStationPayload } from "../shared/types";
 
 interface DeviceAttrs {
   type: DeviceTypes;
-  name?: string;
-  status: DeviceStatus;
-  userId?: string;
-  payload?: TowerPayload | WeatherStationPayload;
+  name: string;
+  description?: string;
+  ownerId: string;
+  ownerType: string;
+  hardware: string;
+  firmware: string;
 }
 
 interface DeviceModel extends mongoose.Model<DeviceDoc> {
@@ -18,11 +20,14 @@ interface DeviceModel extends mongoose.Model<DeviceDoc> {
 
 interface DeviceDoc extends mongoose.Document {
   type: DeviceTypes;
-  name?: string;
-  status: DeviceStatus;
-  userId?: string;
-  payload?: TowerPayload | WeatherStationPayload;
-  lastUpdated: Date;
+  name: string;
+  description: string;
+  ownerId: string;
+  ownerType: string;
+  hardware: string;
+  firmware: string;
+  createdAt: Date;
+  updatedAt: Date;
   version: number;
 }
 
@@ -35,53 +40,31 @@ const deviceSchema = new mongoose.Schema(
     },
     name: {
       type: String,
+      required: true,
+    },
+    description: {
+      type: String,
       required: false,
     },
-    status: {
+    ownerId: {
       type: String,
       required: true,
-      enum: Object.values(DeviceStatus),
-      default: DeviceStatus.OFFLINE,
     },
-    userId: {
+    ownerType: {
       type: String,
-      required: false,
+      required: true,
     },
-    payload: {
-      type: Object,
-      required: false,
-      validate: {
-        validator: function (this: DeviceDoc, value: any) {
-          // Validate based on the device type
-          if (this.type === DeviceTypes.TOWER) {
-            // Check if the payload matches TowerPayload
-            return (
-              typeof value.tankLevel === "number" &&
-              Object.keys(value).length === 1
-            );
-          } else if (this.type === DeviceTypes.WEATHER_STATION) {
-            // Check if the payload matches WeatherStationPayload
-            return (
-              typeof value.sunlight === "number" &&
-              typeof value.rainQuantity === "number" &&
-              typeof value.windForce === "number" &&
-              typeof value.temperature === "number" &&
-              typeof value.humidity === "number" &&
-              Object.keys(value).length === 5
-            );
-          }
-          return false; // Invalid type
-        },
-        message: (props: any) => {
-          return `Payload does not match the expected structure for device type.`;
-        },
-      },
+    hardware: {
+      type: String,
+      required: true,
     },
-    lastUpdated: {
-      type: Date,
+    firmware: {
+      type: String,
+      required: true,
     },
   },
   {
+    timestamps: true,
     toJSON: {
       transform(doc, ret) {
         ret.id = ret._id;

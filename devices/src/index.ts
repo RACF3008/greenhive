@@ -2,8 +2,7 @@ import mongoose from "mongoose";
 
 import { app } from "./app";
 import { natsWrapper } from "./nats-wrapper";
-import { ReadingReceivedListener } from "./events/listeners/reading-received-listener";
-import { MqttDeviceRegisterListener } from "./mqtt/listeners/device-register-listener";
+import { MqttDeviceRegisterListener } from "./messaging/listeners/device-register-listener";
 import { mqttWrapper } from "./mqtt-wrapper";
 
 const start = async () => {
@@ -43,7 +42,6 @@ const start = async () => {
   }
 
   // NATS Listeners
-  new ReadingReceivedListener(natsWrapper.client).listen();
 
   try {
     await mqttWrapper.connect("mqtt://mosquitto-internal:1883", {

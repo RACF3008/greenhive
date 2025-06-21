@@ -8,8 +8,10 @@ it("implementes optimistic concurrency control", async () => {
   const device = Device.build({
     type: DeviceTypes.TOWER,
     name: "testDevice",
-    status: DeviceStatus.ONLINE,
-    userId: new mongoose.Types.ObjectId().toHexString(),
+    ownerId: new mongoose.Types.ObjectId().toHexString(),
+    ownerType: "user",
+    hardware: "v1.0.0",
+    firmware: "v1.0.0",
   });
 
   // Save the device to db
@@ -40,8 +42,10 @@ it("increments the version number on multiple saves", async () => {
   const device = Device.build({
     type: DeviceTypes.TOWER,
     name: "testDevice",
-    status: DeviceStatus.ONLINE,
-    userId: new mongoose.Types.ObjectId().toHexString(),
+    ownerId: new mongoose.Types.ObjectId().toHexString(),
+    ownerType: "user",
+    hardware: "v1.0.0",
+    firmware: "v1.0.0",
   });
 
   await device.save();
