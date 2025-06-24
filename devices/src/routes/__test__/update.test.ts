@@ -169,3 +169,5 @@ it("publishes a deviceUpdatedEvent to NATS", async () => {
 
   expect(natsWrapper.client.publish).toHaveBeenCalled();
 });
+
+it.todo("publishes a DeviceInfoSet message to MQTT");
