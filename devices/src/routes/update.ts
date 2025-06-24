@@ -6,6 +6,7 @@ import {
   NotFoundError,
   requireAuth,
   NotAuthorizedError,
+  OwnerTypes,
 } from "@greenhive/common";
 import { Device } from "../models/device";
 import { DeviceUpdatedPublisher } from "../events/publishers/device-updated-publisher";
@@ -25,7 +26,11 @@ router.put(
     body("ownerType")
       .not()
       .isEmpty()
-      .withMessage("Device owner type must be provided"),
+      .withMessage("Device owner type must be provided")
+      .isIn(Object.values(OwnerTypes))
+      .withMessage(
+        `Owner type must be one of: ${Object.values(OwnerTypes).join(", ")}`
+      ),
   ],
   validateRequest,
   async (req: Request, res: Response) => {

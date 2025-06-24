@@ -9,6 +9,7 @@ import {
   NotFoundError,
   validateRequest,
   OwnerTypes,
+  DeviceTypes,
 } from "@greenhive/common";
 
 const router = express.Router();
@@ -17,7 +18,14 @@ router.post(
   "/api/devices/new",
   requireAuth,
   [
-    body("type").not().isEmpty().withMessage("Device type must be provided"),
+    body("type")
+      .not()
+      .isEmpty()
+      .withMessage("Device type must be provided")
+      .isIn(Object.values(DeviceTypes))
+      .withMessage(
+        `Owner type must be one of: ${Object.values(DeviceTypes).join(", ")}`
+      ),
     body("name").not().isEmpty().withMessage("Device name must be provided"),
     body("hardware")
       .not()

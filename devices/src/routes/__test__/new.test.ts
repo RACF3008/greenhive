@@ -4,13 +4,13 @@ import { app } from "../../app";
 import { Device } from "../../models/device";
 
 import { natsWrapper } from "../../nats-wrapper";
-import { DeviceStatus, DeviceTypes } from "@greenhive/common";
+import { DeviceTypes } from "@greenhive/common";
 
 it("requires auth to create a device", async () => {
   await request(app)
     .post("/api/devices/new")
     .send({
-      type: "tower",
+      type: DeviceTypes.TOWER,
       name: "testDevice",
       hardware: "v1.0.0",
       firmware: "v1.0.0",
@@ -24,7 +24,7 @@ it("requires a valid body", async () => {
     .post("/api/devices/new")
     .set("Cookie", cookie)
     .send({
-      type: "tower",
+      type: DeviceTypes.TOWER,
       hardware: "v1.0.0",
       firmware: "v1.0.0",
     })
@@ -40,7 +40,7 @@ it("creates a new device document", async () => {
     .post("/api/devices/new")
     .set("Cookie", cookie)
     .send({
-      type: "tower",
+      type: DeviceTypes.TOWER,
       name: "testDevice",
       hardware: "v1.0.0",
       firmware: "v1.0.0",
@@ -57,7 +57,7 @@ it("publishes a DeviceNewEvent to NATS", async () => {
     .post("/api/devices/new")
     .set("Cookie", cookie)
     .send({
-      type: "tower",
+      type: DeviceTypes.TOWER,
       name: "testDevice",
       hardware: "v1.0.0",
       firmware: "v1.0.0",
@@ -68,4 +68,6 @@ it("publishes a DeviceNewEvent to NATS", async () => {
 });
 
 // Futuras implementaciones
-it.todo("limits the amount of devices a user can connect");
+it.todo(
+  "limits the amount of devices a user can register before an alert is thrown"
+);
