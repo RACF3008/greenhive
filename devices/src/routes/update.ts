@@ -6,7 +6,6 @@ import {
   NotFoundError,
   requireAuth,
   NotAuthorizedError,
-  BadRequestError,
 } from "@greenhive/common";
 import { Device } from "../models/device";
 import { DeviceUpdatedPublisher } from "../events/publishers/device-updated-publisher";
@@ -18,13 +17,15 @@ router.put(
   "/api/devices/:id",
   requireAuth,
   [
-    body("type")
-      .isIn(["tower", "weatherStation"])
-      .withMessage("Device type must be one of tower, or weatherStation"),
     body("name").not().isEmpty().withMessage("Device name must be provided"),
-    body("status")
-      .isIn(["online", "offline", "maintainance"])
-      .withMessage("Status must be one of online, offline, or maintainance"),
+    body("ownerId")
+      .not()
+      .isEmpty()
+      .withMessage("Device owner ID must be provided"),
+    body("ownerType")
+      .not()
+      .isEmpty()
+      .withMessage("Device owner type must be provided"),
   ],
   validateRequest,
   async (req: Request, res: Response) => {
@@ -34,32 +35,32 @@ router.put(
       throw new NotFoundError();
     }
 
-    if (device.userId !== req.currentUser!.id) {
+    // Verificar si el usuario actual es el dueño, en caso el dispositivo no pertenezca a un cluster.
+    if (device.ownerType !== "user" || device.ownerId !== req.currentUser!.id) {
       throw new NotAuthorizedError();
     }
 
     device.set({
-      type: req.body.type,
       name: req.body.name,
-      status: req.body.status,
-      userId: req.currentUser!.id,
+      description: req.body.description,
+      ownerId: req.body.ownerId,
+      ownerType: req.body.ownerType,
     });
     await device.save();
 
-    if (!device.name || !device.userId) {
-      throw new BadRequestError("Device name and userId must be provided");
-    }
+    // Emitir un evento de device:updated
     await new DeviceUpdatedPublisher(natsWrapper.client).publish({
       id: device.id,
-      type: device.type,
       name: device.name,
-      status: device.status,
-      userId: device.userId,
-      lastUpdated: device.lastUpdated,
+      description: device.description,
+      ownerId: device.ownerId,
+      ownerType: device.ownerType,
+      updatedAt: device.updatedAt,
+      firmware: device.firmware,
       version: device.version,
     });
 
-    res.send(device);
+    res.status(200).send(device);
   }
 );
 

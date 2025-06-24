@@ -1,15 +1,13 @@
 import mongoose from "mongoose";
 
-import { DeviceStatus, DeviceTypes } from "@greenhive/common";
+import { OwnerTypes, DeviceTypes } from "@greenhive/common";
 import { updateIfCurrentPlugin } from "mongoose-update-if-current";
-import { TowerPayload, WeatherStationPayload } from "../shared/types";
 
 interface DeviceAttrs {
   type: DeviceTypes;
   name: string;
   description?: string;
   ownerId: string;
-  ownerType: string;
   hardware: string;
   firmware: string;
 }
@@ -23,7 +21,7 @@ interface DeviceDoc extends mongoose.Document {
   name: string;
   description: string;
   ownerId: string;
-  ownerType: string;
+  ownerType: OwnerTypes;
   hardware: string;
   firmware: string;
   createdAt: Date;
@@ -53,6 +51,8 @@ const deviceSchema = new mongoose.Schema(
     ownerType: {
       type: String,
       required: true,
+      enum: Object.values(OwnerTypes),
+      default: OwnerTypes.USER,
     },
     hardware: {
       type: String,

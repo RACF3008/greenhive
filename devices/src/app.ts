@@ -4,7 +4,7 @@ import { json } from "body-parser";
 import cookieSession from "cookie-session";
 
 // importar routers
-import { registerDeviceRouter } from "./routes/pair";
+import { newDeviceRouter } from "./routes/new";
 import { showDeviceRouter } from "./routes/show";
 import { indexDeviceRouter } from "./routes/index";
 import { updateDeviceRouter } from "./routes/update";
@@ -24,7 +24,7 @@ app.use(
 app.use(currentUser);
 
 // Conectar los routers
-app.use(registerDeviceRouter);
+app.use(newDeviceRouter);
 app.use(showDeviceRouter);
 app.use(indexDeviceRouter);
 app.use(updateDeviceRouter);

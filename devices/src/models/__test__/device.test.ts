@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-import { DeviceStatus, DeviceTypes } from "@greenhive/common";
+import { DeviceStatus, DeviceTypes, OwnerTypes } from "@greenhive/common";
 import { Device } from "../device";
 
 it("implementes optimistic concurrency control", async () => {
@@ -9,7 +9,6 @@ it("implementes optimistic concurrency control", async () => {
     type: DeviceTypes.TOWER,
     name: "testDevice",
     ownerId: new mongoose.Types.ObjectId().toHexString(),
-    ownerType: "user",
     hardware: "v1.0.0",
     firmware: "v1.0.0",
   });
@@ -43,7 +42,6 @@ it("increments the version number on multiple saves", async () => {
     type: DeviceTypes.TOWER,
     name: "testDevice",
     ownerId: new mongoose.Types.ObjectId().toHexString(),
-    ownerType: "user",
     hardware: "v1.0.0",
     firmware: "v1.0.0",
   });
@@ -56,4 +54,15 @@ it("increments the version number on multiple saves", async () => {
 
   await device.save();
   expect(device.version).toEqual(2);
+});
+
+it("sets the defaults correctly", async () => {
+  const device = Device.build({
+    type: DeviceTypes.TOWER,
+    name: "testDevice",
+    ownerId: new mongoose.Types.ObjectId().toHexString(),
+    hardware: "v1.0.0",
+    firmware: "v1.0.0",
+  });
+  expect(device.ownerType).toEqual(OwnerTypes.USER);
 });
