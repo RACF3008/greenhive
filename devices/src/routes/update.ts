@@ -11,6 +11,8 @@ import {
 import { Device } from "../models/device";
 import { DeviceUpdatedPublisher } from "../events/publishers/device-updated-publisher";
 import { natsWrapper } from "../nats-wrapper";
+import { DeviceInfoSetPublisher } from "../messages/publishers/device-info-publisher";
+import { mqttWrapper } from "../mqtt-wrapper";
 
 const router = express.Router();
 
@@ -63,6 +65,12 @@ router.put(
       updatedAt: device.updatedAt,
       firmware: device.firmware,
       version: device.version,
+    });
+
+    await new DeviceInfoSetPublisher(mqttWrapper.client).publish({
+      name: device.name,
+      ownerId: device.ownerId,
+      ownerType: device.ownerType,
     });
 
     res.status(200).send(device);
