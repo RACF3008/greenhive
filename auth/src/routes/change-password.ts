@@ -41,7 +41,7 @@ router.post(
     if (!token) {
       throw new NotFoundError();
     }
-    console.log(token.value);
+
     if (!token.isUsable) {
       throw new BadRequestError("Token already used or expired");
     }

@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import Router from "next/router";
+import { useRouter } from "next/navigation";
 
 import useRequest from "../../../../hooks/use-request";
 import PasswordField from "@/components/forms/PasswordField";
@@ -37,12 +37,14 @@ type Props = {
   token: string;
 };
 
-const ResetPasswordForm = ({ data, token }: Props) => {
+const ChangePasswordForm = ({ data, token }: Props) => {
   /* HOOKS */
+  const router = useRouter();
+
   const { doRequest, errors: requestErrors } = useRequest({
-    url: "/api/auth/reset-password/" + token,
+    url: "/api/users/change-password/" + token,
     method: "post",
-    onSuccess: () => Router.push("/signin"),
+    onSuccess: () => router.push("/signin?msg=Password changed successfully"),
   });
 
   const {
@@ -65,6 +67,7 @@ const ResetPasswordForm = ({ data, token }: Props) => {
 
   /* HANDLERS */
   const handleOnSubmit = handleSubmit(async (formData) => {
+    console.log(formData);
     await doRequest(formData);
   });
 
@@ -101,4 +104,4 @@ const ResetPasswordForm = ({ data, token }: Props) => {
   );
 };
 
-export default ResetPasswordForm;
+export default ChangePasswordForm;

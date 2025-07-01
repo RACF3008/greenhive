@@ -1,23 +1,30 @@
-import axios from 'axios';
-import { cookies, headers } from 'next/headers';
+import axios from "axios";
+
+const isServer = typeof window === "undefined";
 
 const buildClient = () => {
-  if (typeof window === 'undefined') {
-    // We are on the server
+  if (isServer) {
+    const { cookies, headers } = require("next/headers");
+
     const cookieStore = cookies();
-    const headerStore = headers();
+    const cookieHeader = cookieStore
+      .getAll()
+      .map((c: any) => `${c.name}=${c.value}`)
+      .join("; ");
 
     return axios.create({
       baseURL:
-        'http://ingress-nginx-controller.ingress-nginx.svc.cluster.local',
+        "http://ingress-nginx-controller.ingress-nginx.svc.cluster.local", // production in-cluster
       headers: {
-        Cookie: cookieStore.toString(),
+        Cookie: cookieHeader,
+        ...headers(), // optionally pass through other headers (e.g. user-agent)
       },
     });
   } else {
-    // We must be on the browser
+    // Client-side
     return axios.create({
-      baseURL: '/',
+      baseURL: "/",
+      withCredentials: true, // Important if you're calling from browser and using cookies
     });
   }
 };

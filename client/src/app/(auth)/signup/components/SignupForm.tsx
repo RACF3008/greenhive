@@ -7,9 +7,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 
-import useRequest from "../../../../hooks/use-request";
-import InputField from "../../../../components/forms/InputField";
-import { CheckboxField as TermsCheckbox } from "../../../../components/forms/CheckboxField";
+import useRequest from "@/hooks/use-request";
+import InputField from "@/components/forms/InputField";
+import { CheckboxField as TermsCheckbox } from "@/components/forms/CheckboxField";
 import PasswordField from "@/components/forms/PasswordField";
 
 /* VERIFICATION SCHEMA */

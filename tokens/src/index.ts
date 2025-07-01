@@ -2,9 +2,9 @@ import mongoose from "mongoose";
 
 import { app } from "./app";
 import { natsWrapper } from "./nats-wrapper";
-import { ForgotPasswordListener } from "./events/listeners/user-reset-password-listener";
-import { TokenExpiredListener } from "./events/listeners/expiration-token-listener";
-import { TokenUsedListener } from "./events/listeners/user-token-used-listener";
+import { UserResetPasswordListener } from "./events/listeners/user-reset-password-listener";
+import { ExpirationTokenListener } from "./events/listeners/expiration-token-listener";
+import { UserTokenUsedListener } from "./events/listeners/user-token-used-listener";
 import { UserCreatedListener } from "./events/listeners/user-created-listener";
 import { UserVerifyListener } from "./events/listeners/user-verify-listener";
 
@@ -44,9 +44,9 @@ const start = async () => {
     console.error(err);
   }
 
-  new ForgotPasswordListener(natsWrapper.client).listen();
-  new TokenExpiredListener(natsWrapper.client).listen();
-  new TokenUsedListener(natsWrapper.client).listen();
+  new UserResetPasswordListener(natsWrapper.client).listen();
+  new ExpirationTokenListener(natsWrapper.client).listen();
+  new UserTokenUsedListener(natsWrapper.client).listen();
   new UserCreatedListener(natsWrapper.client).listen();
   new UserVerifyListener(natsWrapper.client).listen();
 

@@ -8,7 +8,7 @@ import { Device } from "../../models/device";
 import { DeviceUpdatedPublisher } from "../../events/publishers/device-updated-publisher";
 import { natsWrapper } from "../../nats-wrapper";
 
-export class MqttDeviceRegisterListener extends MqttListener<DeviceInfoReportMessage> {
+export class DeviceInfoReportListener extends MqttListener<DeviceInfoReportMessage> {
   readonly topic = Topics.DeviceInfoReport;
   queueGroupName = queueGroupName;
 

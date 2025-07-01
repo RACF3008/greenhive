@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 import { app } from "./app";
 import { natsWrapper } from "./nats-wrapper";
 import { TokenCreatedListener } from "./events/listeners/token-created-listener";
-import { TokenUpdatedListener } from "./events/listeners/token-revoked-listener";
+import { TokenRevokedListener } from "./events/listeners/token-revoked-listener";
 
 const start = async () => {
   console.log("Starting up...");
@@ -44,7 +44,7 @@ const start = async () => {
   }
 
   new TokenCreatedListener(natsWrapper.client).listen();
-  new TokenUpdatedListener(natsWrapper.client).listen();
+  new TokenRevokedListener(natsWrapper.client).listen();
 
   app.listen(3000, () => {
     console.log("Listening on port 3000!");

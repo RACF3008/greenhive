@@ -7,7 +7,7 @@ import ErrorMessage from "@/components/global/ErrorMessage";
 
 type Props = {
   verified: boolean;
-  errorMessage: string;
+  errorMessage: any;
 };
 
 const VerificationResult = ({ verified, errorMessage }: Props) => {

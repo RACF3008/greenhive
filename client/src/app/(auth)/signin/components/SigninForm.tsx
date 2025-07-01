@@ -1,36 +1,41 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import { z } from 'zod';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useRouter } from 'next/navigation';
+import { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
+import { z } from "zod";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
 
-import useRequest from '../../../../hooks/use-request';
-import InputField from '../../../../components/forms/InputField';
-import { CheckboxField as SessionCheckbox } from '../../../../components/forms/CheckboxField';
-import PasswordField from '@/components/forms/PasswordField';
-import Link from 'next/link';
+import useRequest from "../../../../hooks/use-request";
+import InputField from "../../../../components/forms/InputField";
+import { CheckboxField as SessionCheckbox } from "../../../../components/forms/CheckboxField";
+import PasswordField from "@/components/forms/PasswordField";
+import Link from "next/link";
 
 /* VERIFICATION SCHEMA */
 const schema = z.object({
   identifier: z
     .string()
-    .nonempty({ message: 'Email or username must be valid' }),
-  password: z.string().nonempty({ message: 'Password must be provided' }),
+    .nonempty({ message: "Email or username must be valid" }),
+  password: z.string().nonempty({ message: "Password must be provided" }),
   sessionCheckbox: z.boolean().optional(),
 });
 
 type Inputs = z.infer<typeof schema>;
 
 const SigninForm = ({ data }: { data: any }) => {
+  const searchParams = useSearchParams();
+
   const router = useRouter();
-  const [error, setError] = useState('');
-  const [visibleError, setVisibleError] = useState('');
+  const [successMessage, setSuccessMessage] = useState("");
+  const [error, setError] = useState("");
+  const [visibleError, setVisibleError] = useState("");
+
   const { doRequest, errors: requestErrors } = useRequest({
-    url: '/api/users/signin',
-    method: 'post',
-    onSuccess: () => router.push('/'),
+    url: "/api/users/signin",
+    method: "post",
+    onSuccess: () => router.push("/dashboard"),
   });
 
   const {
@@ -42,9 +47,18 @@ const SigninForm = ({ data }: { data: any }) => {
   });
 
   useEffect(() => {
-    if (requestErrors && typeof requestErrors === 'string') {
+    const message = searchParams.get("msg");
+    if (message) {
+      setSuccessMessage(message);
+      const timer = setTimeout(() => setSuccessMessage(""), 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [searchParams]);
+
+  useEffect(() => {
+    if (requestErrors && typeof requestErrors === "string") {
       setVisibleError(requestErrors);
-      const timer = setTimeout(() => setVisibleError(''), 4000);
+      const timer = setTimeout(() => setVisibleError(""), 4000);
       return () => clearTimeout(timer);
     }
   }, [requestErrors]);
@@ -58,6 +72,11 @@ const SigninForm = ({ data }: { data: any }) => {
       {visibleError && (
         <div className="fixed top-4 left-1/2 transform -translate-x-1/2 bg-red-600 text-white px-6 py-3 rounded-md shadow-md z-50">
           {visibleError}
+        </div>
+      )}
+      {successMessage && (
+        <div className="fixed top-4 left-1/2 transform -translate-x-1/2 bg-green-500 text-white px-6 py-3 rounded-md shadow-md z-50">
+          {successMessage}
         </div>
       )}
       <form
@@ -88,7 +107,7 @@ const SigninForm = ({ data }: { data: any }) => {
             error={errors.sessionCheckbox}
           />
           <Link
-            href="/reset-password"
+            href="/forgot-password"
             className="underline text-sm text-white text-end"
           >
             Forgot your Password?

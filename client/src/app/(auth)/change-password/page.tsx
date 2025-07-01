@@ -1,9 +1,8 @@
-import axios from "axios";
 import { notFound } from "next/navigation";
 
-import ResetPasswordForm from "./components/ResetPasswordForm";
+import ChangePasswordForm from "./components/ChangePasswordForm";
 
-const ResetPasswordPage = async ({
+const ChangePasswordPage = async ({
   searchParams,
 }: {
   searchParams: { token?: string };
@@ -19,9 +18,9 @@ const ResetPasswordPage = async ({
       <h1 className="text-center mb-4 font-semibold text-2xl">
         Change your Password
       </h1>
-      <ResetPasswordForm data={null} token={token} />
+      <ChangePasswordForm data={null} token={token} />
     </div>
   );
 };
 
-export default ResetPasswordPage;
+export default ChangePasswordPage;

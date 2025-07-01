@@ -22,13 +22,11 @@ export class ExpirationTokenListener extends Listener<ExpirationTokenEvent> {
       throw new NotFoundError();
     }
 
-    // Chequear si el token es utilizable
-    if (!token.isUsable) {
-      throw new BadRequestError("Token already used or expired");
+    // Chequear si el token es utilizable. Si si, inhabilitarlo.
+    if (token.isUsable) {
+      token.isUsable = false;
+      await token.save();
     }
-
-    token.isUsable = false;
-    await token.save();
 
     // Publicar la información del nuevo token creado
     await new TokenRevokedPublisher(this.client).publish({

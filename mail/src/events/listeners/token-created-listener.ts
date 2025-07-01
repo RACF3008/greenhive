@@ -32,7 +32,6 @@ export class TokenCreatedListener extends Listener<TokenCreatedEvent> {
       buttonText: "",
       buttonLink: "",
       footer: "",
-      templateName: "single-action.html",
     };
 
     // Definir el contenido del correo dependiendo del proposito
@@ -43,7 +42,7 @@ export class TokenCreatedListener extends Listener<TokenCreatedEvent> {
           title: `Hi, ${user.firstName} ${user.lastName}`,
           message:
             "Thank you for creating an account. Please verify your email to start using our services.",
-          link: `http://localhost/verification?token=${data.value}`,
+          link: `http://localhost/verification-result?token=${data.value}`,
           buttonText: "Verify Account",
           footer: "Get in touch. We love to hear from you.",
         };
@@ -55,16 +54,14 @@ export class TokenCreatedListener extends Listener<TokenCreatedEvent> {
           title: `Hi, ${user.firstName} ${user.lastName}`,
           message:
             "We received a password reset request. If this wasn’t you, ignore this email. Otherwise, click below to reset your password.",
-          link: `http://greenhive.io/auth/reset-password/${data.value}`,
+          link: `http://localhost/change-password?token=${data.value}`,
           buttonText: "Reset Password",
           footer: "This link will expire soon.",
         };
         break;
     }
 
-    const html = renderEmail(emailData);
-
-    console.log(html);
+    const html = renderEmail("single-action.html", emailData);
 
     // Enviar el correo
     await emailTransporter.sendEmail(user.email, emailData.header, html);

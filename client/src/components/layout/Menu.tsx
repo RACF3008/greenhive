@@ -1,45 +1,45 @@
-import Link from 'next/link';
-import HomeFilledIcon from '@mui/icons-material/HomeFilled';
-import HiveIcon from '@mui/icons-material/Hive';
-import AssignmentIcon from '@mui/icons-material/Assignment';
-import PersonIcon from '@mui/icons-material/Person';
-import SettingsIcon from '@mui/icons-material/Settings';
-import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
-import TrendingUpIcon from '@mui/icons-material/TrendingUp';
-import LogoutIcon from '@mui/icons-material/Logout';
-import { faSeedling } from '@fortawesome/free-solid-svg-icons';
+import Link from "next/link";
+import HomeFilledIcon from "@mui/icons-material/HomeFilled";
+import HiveIcon from "@mui/icons-material/Hive";
+import AssignmentIcon from "@mui/icons-material/Assignment";
+import PersonIcon from "@mui/icons-material/Person";
+import SettingsIcon from "@mui/icons-material/Settings";
+import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
+import TrendingUpIcon from "@mui/icons-material/TrendingUp";
+import LogoutIcon from "@mui/icons-material/Logout";
+import { faSeedling } from "@fortawesome/free-solid-svg-icons";
 
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 const menuItems = [
   {
-    title: 'MENU',
+    title: "MAIN",
     items: [
       {
-        label: 'Home',
-        href: '/',
+        label: "Home",
+        href: "/dashboard",
         icon: <HomeFilledIcon />,
-        visible: ['admin', 'operator', 'viewer'],
+        visible: ["admin", "operator", "viewer"],
       },
       {
-        label: 'Clusters',
-        href: '/clusters/list',
+        label: "Clusters",
+        href: "/dashboard/clusters",
         icon: (
           <span className="h-6 w-6">
             <HiveIcon />
           </span>
         ),
-        visible: ['super-admin', 'admin', 'operator', 'viewer'],
+        visible: ["super-admin", "admin", "operator", "viewer"],
       },
       {
-        label: 'All Devices',
-        href: '/devices/list',
+        label: "Devices",
+        href: "dashboard/devices",
         icon: (
           <span className="h-6 w-6">
             <FontAwesomeIcon icon={faSeedling} />
           </span>
         ),
-        visible: ['super-admin', 'admin', 'operator', 'viewer'],
+        visible: ["super-admin", "admin", "operator", "viewer"],
       },
       // {
       //   label: 'Productivity',
@@ -62,14 +62,8 @@ const menuItems = [
     ],
   },
   {
-    title: 'OTHERS',
+    title: "OTHERS",
     items: [
-      // {
-      //   label: 'Profile',
-      //   href: '/profile',
-      //   icon: <PersonIcon />,
-      //   visible: ['admin', 'operator'],
-      // },
       // {
       //   label: 'Settings',
       //   href: '/settings',
@@ -77,10 +71,10 @@ const menuItems = [
       //   visible: ['admin', 'operator'],
       // },
       {
-        label: 'Logout',
-        href: '/logout',
+        label: "Logout",
+        href: "/logout",
         icon: <LogoutIcon />,
-        visible: ['admin', 'operator', 'viewer'],
+        visible: ["admin", "operator", "viewer"],
       },
     ],
   },

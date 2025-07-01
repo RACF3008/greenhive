@@ -1,39 +1,35 @@
-import axios from "axios";
+import axios, { Method } from "axios";
 import { useState } from "react";
 
-interface UseRequestProps {
+type ErrorResponse = {
+  message: string;
+  field?: string;
+};
+
+type UseRequestProps<T> = {
   url: string;
-  method: "get" | "post" | "put" | "delete";
-  onSuccess?: (data?: any) => void;
-}
+  method: Method;
+  body?: T;
+  onSuccess?: (data: any) => void;
+};
 
-const useRequest = ({ url, method, onSuccess }: UseRequestProps) => {
-  const [errors, setErrors] = useState<null | string>(null);
+export default function useRequest<T = any>({
+  url,
+  method,
+  body,
+  onSuccess,
+}: UseRequestProps<T>) {
+  const [errors, setErrors] = useState<string[] | null>(null);
 
-  const doRequest = async (body = {}) => {
+  const doRequest = async (overrideBody?: Partial<T>) => {
     try {
       setErrors(null);
-
-      console.log("Sending request to:", url);
-      console.log("Request body:", body);
-
-      let response;
-      switch (method) {
-        case "get":
-          response = await axios.get(url, { params: body });
-          break;
-        case "post":
-          response = await axios.post(url, body);
-          break;
-        case "put":
-          response = await axios.put(url, body);
-          break;
-        case "delete":
-          response = await axios.delete(url, { data: body });
-          break;
-        default:
-          throw new Error(`Unsupported method: ${method}`);
-      }
+      const response = await axios.request({
+        url,
+        method,
+        data: overrideBody || body,
+        withCredentials: true,
+      });
 
       if (onSuccess) {
         onSuccess(response.data);
@@ -41,18 +37,16 @@ const useRequest = ({ url, method, onSuccess }: UseRequestProps) => {
 
       return response.data;
     } catch (err: any) {
-      const errorMessages =
-        err.response?.data?.errors?.map((e: any) => e.message).join("\n") ||
-        "An unexpected error occurred";
-
-      setErrors(
-        err.response?.data?.errors?.map((e: any) => e.message).join(", ") ||
-          "An unexpected error occurred"
-      );
+      if (err.response?.data?.errors) {
+        const messages = err.response.data.errors.map(
+          (e: ErrorResponse) => e.message
+        );
+        setErrors(messages);
+      } else {
+        setErrors(["Something went wrong"]);
+      }
     }
   };
 
   return { doRequest, errors };
-};
-
-export default useRequest;
+}

@@ -1,15 +1,20 @@
-import Menu from '@/components/layout/Menu';
-import Navbar from '@/components/layout/Navbar';
-import Image from 'next/image';
-import Link from 'next/link';
+import buildClient from "@/api/build-client";
+import Menu from "@/components/layout/Menu";
+import Navbar from "@/components/layout/Navbar";
+import Image from "next/image";
+import Link from "next/link";
 
-const role = 'admin';
-
-export default function DashboardLayout({
+export default async function DashboardLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const client = buildClient();
+
+  const res = await client.get("/api/users/currentuser");
+  const currentUser = res.data.currentUser;
+  console.log(currentUser);
+
   return (
     <div className="h-screen flex">
       {/* LEFT */}

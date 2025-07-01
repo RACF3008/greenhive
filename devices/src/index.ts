@@ -2,8 +2,8 @@ import mongoose from "mongoose";
 
 import { app } from "./app";
 import { natsWrapper } from "./nats-wrapper";
-import { MqttDeviceRegisterListener } from "./messaging/listeners/device-register-listener";
 import { mqttWrapper } from "./mqtt-wrapper";
+import { DeviceInfoReportListener } from "./messages/listeners/device-info-listener";
 
 const start = async () => {
   if (!process.env.JWT_KEY) {
@@ -53,7 +53,7 @@ const start = async () => {
   }
 
   // MQTT Listeners
-  new MqttDeviceRegisterListener(mqttWrapper.client).listen();
+  new DeviceInfoReportListener(mqttWrapper.client).listen();
 
   app.listen(3000, () => {
     console.log("Listening on port 3000!");

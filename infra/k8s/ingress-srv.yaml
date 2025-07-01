@@ -4,7 +4,7 @@ metadata:
   name: ingress-srv
   annotations:
     kubernetes.io/ingress.class: nginx
-    nginx.ingress.kubernetes.io/use-regex: 'true'
+    nginx.ingress.kubernetes.io/use-regex: "true"
 spec:
   rules:
     - http:
@@ -23,27 +23,27 @@ spec:
                 name: devices-srv
                 port:
                   number: 3000
-          - path: /api/logs/?(.*)
-            pathType: ImplementationSpecific
-            backend:
-              service:
-                name: logs-srv
-                port:
-                  number: 3000
-          - path: /api/readings/?(.*)
-            pathType: ImplementationSpecific
-            backend:
-              service:
-                name: readings-srv
-                port:
-                  number: 3000
-          - path: /api/commands/?(.*)
-            pathType: ImplementationSpecific
-            backend:
-              service:
-                name: commands-srv
-                port:
-                  number: 3000
+          # - path: /api/logs/?(.*)
+          #   pathType: ImplementationSpecific
+          #   backend:
+          #     service:
+          #       name: logs-srv
+          #       port:
+          #         number: 3000
+          # - path: /api/readings/?(.*)
+          #   pathType: ImplementationSpecific
+          #   backend:
+          #     service:
+          #       name: readings-srv
+          #       port:
+          #         number: 3000
+          # - path: /api/commands/?(.*)
+          #   pathType: ImplementationSpecific
+          #   backend:
+          #     service:
+          #       name: commands-srv
+          #       port:
+          #         number: 3000
           - path: /?(.*)
             pathType: ImplementationSpecific
             backend:
