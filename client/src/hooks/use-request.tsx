@@ -31,6 +31,8 @@ export default function useRequest<T = any>({
         withCredentials: true,
       });
 
+      console.log("Response:", response);
+
       if (onSuccess) {
         onSuccess(response.data);
       }

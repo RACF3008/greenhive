@@ -53,6 +53,13 @@ const SigninForm = ({ data }: { data: any }) => {
       const timer = setTimeout(() => setSuccessMessage(""), 5000);
       return () => clearTimeout(timer);
     }
+
+    const urlError = searchParams.get("err");
+    if (urlError) {
+      setSuccessMessage(urlError);
+      const timer = setTimeout(() => setSuccessMessage(""), 5000);
+      return () => clearTimeout(timer);
+    }
   }, [searchParams]);
 
   useEffect(() => {
