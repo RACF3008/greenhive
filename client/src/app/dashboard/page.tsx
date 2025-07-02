@@ -1,11 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useUserContext } from "@/contexts/dashboard-context";
 
 const HomePage = () => {
+  const user = useUserContext();
   return (
     <div>
-      <h1>Welcome</h1>
+      <h1 className="text-2xl text-white">Welcome, {user.firstName}</h1>
     </div>
   );
 };

@@ -6,7 +6,9 @@ export function middleware(request: NextRequest) {
 
   // Redirect to /signin if not authenticated
   if (!token) {
-    return NextResponse.redirect(new URL("/signin", request.url));
+    return NextResponse.redirect(
+      new URL("/signin?err=Signin required", request.url)
+    );
   }
 
   return NextResponse.next(); // allow request to continue

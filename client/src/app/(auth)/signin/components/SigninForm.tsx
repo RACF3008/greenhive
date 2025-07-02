@@ -12,8 +12,7 @@ import InputField from "../../../../components/forms/InputField";
 import { CheckboxField as SessionCheckbox } from "../../../../components/forms/CheckboxField";
 import PasswordField from "@/components/forms/PasswordField";
 import Link from "next/link";
-import { request } from "http";
-import ErrorMessages from "@/components/global/ErrorMessages";
+import Toast from "@/components/global/toast";
 
 /* VERIFICATION SCHEMA */
 const schema = z.object({
@@ -31,12 +30,26 @@ const SigninForm = ({ data }: { data: any }) => {
 
   const router = useRouter();
   const [error, setError] = useState("");
+  const [errorMessage, setErrorMessage] = useState<string[]>([]);
+  const [successMessage, setSuccessMessage] = useState<string[]>([]);
 
   const { doRequest, errors: requestErrors } = useRequest({
     url: "/api/users/signin",
     method: "post",
     onSuccess: () => router.push("/dashboard"),
   });
+
+  useEffect(() => {
+    const msg = searchParams.get("msg");
+    if (msg) {
+      setSuccessMessage([msg]);
+    }
+
+    const err = searchParams.get("err");
+    if (err) {
+      setErrorMessage([err]);
+    }
+  }, [searchParams]);
 
   const {
     register,
@@ -52,7 +65,10 @@ const SigninForm = ({ data }: { data: any }) => {
 
   return (
     <>
-      <ErrorMessages requestErrors={requestErrors} />
+      {/* TOASTS */}
+      <Toast type="success" message={successMessage} />
+      <Toast type="error" message={requestErrors} />
+      <Toast type="error" message={errorMessage} />
 
       <form
         onSubmit={handleSubmit(handleOnSubmit)}

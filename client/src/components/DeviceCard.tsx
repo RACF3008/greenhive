@@ -1,11 +1,11 @@
-'use client';
+"use client";
 
-import Image from 'next/image';
-import Link from 'next/link';
+import Image from "next/image";
+import Link from "next/link";
 
 type PayloadKey = {
   tag: string;
-  role: 'sensor' | 'actuator' | string;
+  role: "sensor" | "actuator" | string;
   display: string;
   unit: string;
   fillColor: string;
@@ -15,40 +15,40 @@ type PayloadKey = {
 
 const payloadKeys: Record<string, PayloadKey> = {
   tankLevel: {
-    tag: 'Tank Level',
-    role: 'sensor',
-    unit: '%',
-    display: 'percentage',
-    fillColor: '#4bb4f5',
-    bgColor: '#fff',
-    textColor: '#000',
+    tag: "Tank Level",
+    role: "sensor",
+    unit: "%",
+    display: "percentage",
+    fillColor: "#4bb4f5",
+    bgColor: "#fff",
+    textColor: "#000",
   },
   humidity: {
-    tag: 'Humidity',
-    role: 'sensor',
-    display: 'percentage',
-    unit: '%',
-    fillColor: '#66e4ff',
-    bgColor: '#fff',
-    textColor: '#000',
+    tag: "Humidity",
+    role: "sensor",
+    display: "percentage",
+    unit: "%",
+    fillColor: "#66e4ff",
+    bgColor: "#fff",
+    textColor: "#000",
   },
   temperature: {
-    tag: 'Temperature',
-    role: 'sensor',
-    display: 'text',
-    unit: '°C',
-    fillColor: '#ff8b3d',
-    bgColor: '#fff',
-    textColor: '#fff',
+    tag: "Temperature",
+    role: "sensor",
+    display: "text",
+    unit: "°C",
+    fillColor: "#ff8b3d",
+    bgColor: "#fff",
+    textColor: "#fff",
   },
   pumpOn: {
-    tag: 'Pump',
-    role: 'actuator',
-    display: 'bool',
-    unit: '',
-    fillColor: '#15e585',
-    bgColor: '#ff4e4e',
-    textColor: '#fff',
+    tag: "Pump",
+    role: "actuator",
+    display: "bool",
+    unit: "",
+    fillColor: "#15e585",
+    bgColor: "#ff4e4e",
+    textColor: "#fff",
   },
 };
 
@@ -57,10 +57,6 @@ interface DeviceData {
   type: string;
   name: string;
   description: string;
-  status: string;
-  payload: {
-    [key: string]: string | boolean;
-  };
 }
 
 type DeviceCardProps = {
@@ -72,7 +68,7 @@ const renderSensor = (key: string, value: string | boolean, type: string) => {
   if (!payload || payload.role !== type) return null;
 
   switch (payload.display) {
-    case 'percentage':
+    case "percentage":
       return (
         <div
           key={key}
@@ -94,7 +90,7 @@ const renderSensor = (key: string, value: string | boolean, type: string) => {
         </div>
       );
 
-    case 'text':
+    case "text":
       return (
         <div key={key} className="flex items-center justify-between mt-2">
           <span className="text-sm text-primary-100 w-1/4">{payload.tag}</span>
@@ -111,7 +107,7 @@ const renderSensor = (key: string, value: string | boolean, type: string) => {
         </div>
       );
 
-    case 'bool':
+    case "bool":
       return (
         <div key={key} className="flex items-center justify-between mt-2">
           <span className="text-sm text-primary-100 w-1/4">{payload.tag}</span>
@@ -122,7 +118,7 @@ const renderSensor = (key: string, value: string | boolean, type: string) => {
               backgroundColor: value ? payload.fillColor : payload.bgColor,
             }}
           >
-            {value ? 'ON' : 'OFF'}
+            {value ? "ON" : "OFF"}
           </div>
         </div>
       );
@@ -150,50 +146,20 @@ const DeviceCard = ({ deviceData }: DeviceCardProps) => {
           <h2 className="font-semibold text-md text-primary-200">
             {deviceData.type}
           </h2>
-          {deviceData.status === 'online' && (
-            <div className="flex items-center gap-2">
-              <span className="h-3 w-3 bg-greenAccent-500 rounded-full"></span>
-              <span className="text-greenAccent-500">Online</span>
-            </div>
-          )}
-          {deviceData.status === 'offline' && (
-            <div className="flex items-center gap-2">
-              <span className="h-3 w-3 bg-gray-300 rounded-full"></span>
-              <span className="text-gray-300">Offline</span>
-            </div>
-          )}
-          {deviceData.status === 'error' && (
-            <div className="flex items-center gap-2">
-              <span className="h-3 w-3 bg-redAccent-400 rounded-full"></span>
-              <span className="text-redAccent-400">Error</span>
-            </div>
-          )}
-          {deviceData.status === 'maintenance' && (
-            <div className="flex items-center gap-2">
-              <span className="h-3 w-3 bg-yellowAccent-500 rounded-full"></span>
-              <span className="text-yellowAccent-500">Maintenance</span>
-            </div>
-          )}
-          {deviceData.status === 'test' && (
-            <div className="flex items-center gap-2">
-              <span className="h-3 w-3 bg-purple-400 rounded-full"></span>
-              <span className="text-purple-400">Test</span>
-            </div>
-          )}
         </div>
         <h1 className="font-bold text-lg text-white">{deviceData.name}</h1>
         <span className="text-sm text-primary-200 line-clamp-3 overflow-hidden fade-out h-[60px]">
           {deviceData.description}
         </span>
         <div className="flex flex-col mt-4 w-full">
-          <span className="text-md text-white mb-2 font-semibold">Sensors</span>
+          {/* <span className="text-md text-white mb-2 font-semibold">Sensors</span>
           {Object.entries(deviceData.payload).map(([key, value]) =>
             renderSensor(key, value, 'sensor')
           )}
           <span className="text-md text-white font-semibold">Actuators</span>
           {Object.entries(deviceData.payload).map(([key, value]) =>
             renderSensor(key, value, 'actuator')
-          )}
+          )} */}
         </div>
       </div>
     </Link>

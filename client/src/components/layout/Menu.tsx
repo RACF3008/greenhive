@@ -19,18 +19,16 @@ const menuItems = [
         label: "Home",
         href: "/dashboard",
         icon: <HomeFilledIcon />,
-        visible: ["admin", "operator", "viewer"],
       },
-      {
-        label: "Clusters",
-        href: "/dashboard/clusters",
-        icon: (
-          <span className="h-6 w-6">
-            <HiveIcon />
-          </span>
-        ),
-        visible: ["super-admin", "admin", "operator", "viewer"],
-      },
+      // {
+      //   label: "Clusters",
+      //   href: "/dashboard/clusters",
+      //   icon: (
+      //     <span className="h-6 w-6">
+      //       <HiveIcon />
+      //     </span>
+      //   ),
+      // },
       {
         label: "Devices",
         href: "dashboard/devices",
@@ -39,25 +37,21 @@ const menuItems = [
             <FontAwesomeIcon icon={faSeedling} />
           </span>
         ),
-        visible: ["super-admin", "admin", "operator", "viewer"],
       },
       // {
       //   label: 'Productivity',
       //   href: '/',
       //   icon: <TrendingUpIcon />,
-      //   visible: ['admin'],
       // },
       // {
       //   label: 'Fincance',
       //   href: '/',
       //   icon: <AttachMoneyIcon />,
-      //   visible: ['admin'],
       // },
       // {
       //   label: 'Tasks',
       //   href: '/tasks',
       //   icon: <AssignmentIcon />,
-      //   visible: ['admin', 'operator'],
       // },
     ],
   },
@@ -68,13 +62,11 @@ const menuItems = [
       //   label: 'Settings',
       //   href: '/settings',
       //   icon: <SettingsIcon />,
-      //   visible: ['admin', 'operator'],
       // },
       {
         label: "Logout",
         href: "/logout",
         icon: <LogoutIcon />,
-        visible: ["admin", "operator", "viewer"],
       },
     ],
   },
@@ -92,18 +84,16 @@ const Menu = ({ role }: MenuProps) => {
           <span className="hidden lg:block text-primary-300 font-light my-4">
             {section.title}
           </span>
-          {section.items.map((item) =>
-            item.visible.includes(role) ? (
-              <Link
-                href={item.href}
-                key={item.href}
-                className="flex items-center justify-center lg:justify-start gap-4 p-2 text-primary-100 rounded-md hover:bg-primary-400 transition"
-              >
-                {item.icon}
-                <span className="hidden lg:block">{item.label}</span>
-              </Link>
-            ) : null
-          )}
+          {section.items.map((item) => (
+            <Link
+              href={item.href}
+              key={item.href}
+              className="flex items-center justify-center lg:justify-start gap-4 p-2 text-primary-100 rounded-md hover:bg-primary-400 transition"
+            >
+              {item.icon}
+              <span className="hidden lg:block">{item.label}</span>
+            </Link>
+          ))}
         </div>
       ))}
     </div>

@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 
-import ErrorMessage from "@/components/global/ErrorMessages";
+import ErrorMessage from "@/components/global/toast";
 
 type Props = {
   verified: boolean;
@@ -22,7 +22,11 @@ const VerificationResult = ({ verified, errorMessage }: Props) => {
 
   return (
     <>
-      {visibleError && <ErrorMessage message={visibleError} />}
+      {visibleError && (
+        <div className="fixed top-4 left-1/2 transform -translate-x-1/2 bg-red-600 text-white px-6 py-3 rounded-md shadow-md z-50">
+          visibleError
+        </div>
+      )}
       <div className="flex flex-col w-full items-center my-8">
         <h1 className="text-center mb-4 font-semibold text-2xl">
           {verified ? "Account Verified" : "Account Verification Failed"}

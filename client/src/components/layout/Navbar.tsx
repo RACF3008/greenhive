@@ -1,9 +1,13 @@
+"use client";
+
 import SearchIcon from "@mui/icons-material/Search";
 import LocalPostOfficeIcon from "@mui/icons-material/LocalPostOffice";
 import AnnouncementIcon from "@mui/icons-material/Announcement";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import { useUserContext } from "@/contexts/dashboard-context";
 
 const Navbar = () => {
+  const user = useUserContext();
   return (
     <div className="flex items-center justify-between p-4">
       {/* SEARCH BAR */}
@@ -33,11 +37,11 @@ const Navbar = () => {
           </div>
         </div>
         <div className="flex flex-col">
-          <span className="text-xs leading-3 font-medium text-primary-100">
-            Username
+          <span className="text-xs leading-3 font-medium text-primary-100 text-right">
+            {user.username}
           </span>
           <span className="text-[10px] leading-3 text-primary-200 text-right">
-            Rank
+            {user.email}
           </span>
         </div>
         <AccountCircleIcon sx={{ fontSize: 36, color: "white" }} />

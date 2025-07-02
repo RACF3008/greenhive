@@ -12,10 +12,6 @@ const deviceDataList = [
     type: "tower",
     name: "MyTower",
     description: "Lorem ipsum dolor sit amet consectetur adipiscing elit.",
-    payload: {
-      tankLevel: 50,
-      pumpOn: true,
-    },
   },
   {
     id: "123442565429",
@@ -23,47 +19,27 @@ const deviceDataList = [
     name: "MyTower1",
     description:
       "Lorem ipsum dolor sit amet consectetur adipiscing elit. Lorem ipsum dolor sit amet consectetur adipiscing elit.",
-    status: "offline",
-    payload: {
-      tankLevel: 30,
-      pumpOn: false,
-    },
   },
   {
     id: "123442565420",
     type: "tower",
     name: "MyTower2",
-    status: "error",
     description:
       "Lorem ipsum dolor sit amet consectetur adipiscing elit. Lorem ipsum dolor sit amet consectetur adipiscing elit. Lorem ipsum dolor sit amet consectetur adipiscing elit. Lorem ipsum dolor sit amet consectetur adipiscing elit. Lorem ipsum dolor sit amet consectetur adipiscing elit. Lorem ipsum dolor sit amet consectetur adipiscing elit.",
-    payload: {
-      tankLevel: 80,
-      pumpOn: false,
-    },
   },
   {
     id: "123442565420",
     type: "tower",
     name: "MyTower2",
-    status: "maintenance",
     description:
       "Lorem ipsum dolor sit amet consectetur adipiscing elit. Lorem ipsum dolor sit amet consectetur adipiscing elit. Lorem ipsum dolor sit amet consectetur adipiscing elit. Lorem ipsum dolor sit amet consectetur adipiscing elit. Lorem ipsum dolor sit amet consectetur adipiscing elit. Lorem ipsum dolor sit amet consectetur adipiscing elit.",
-    payload: {
-      tankLevel: 80,
-      pumpOn: true,
-    },
   },
   {
     id: "123442565430",
     type: "tower",
     name: "MyTower2",
-    status: "test",
     description:
       "Lorem ipsum dolor sit amet consectetur adipiscing elit. Lorem ipsum dolor sit amet consectetur adipiscing elit. Lorem ipsum dolor sit amet consectetur adipiscing elit. Lorem ipsum dolor sit amet consectetur adipiscing elit. Lorem ipsum dolor sit amet consectetur adipiscing elit. Lorem ipsum dolor sit amet consectetur adipiscing elit.",
-    payload: {
-      tankLevel: 80,
-      pumpOn: true,
-    },
   },
 ];
 

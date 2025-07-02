@@ -9,7 +9,7 @@ import Link from "next/link";
 
 import useRequest from "@/hooks/use-request";
 import InputField from "@/components/forms/InputField";
-import ErrorMessages from "@/components/global/ErrorMessages";
+import Toast from "@/components/global/toast";
 
 const schema = z.object({
   email: z.string().email({ message: "Email must be valid" }),
@@ -40,7 +40,8 @@ const ResendVerificationForm = ({ data }: { data: any }) => {
 
   return (
     <>
-      <ErrorMessages requestErrors={requestErrors} />
+      <Toast type="error" message={requestErrors} />
+
       <form
         className="flex flex-col gap-4 bg-primary-700 p-4 w-3/4 md:w-1/2 rounded-md"
         onSubmit={handleSubmit(handleOnSubmit)}

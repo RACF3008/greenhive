@@ -1,6 +1,5 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -8,7 +7,7 @@ import { useRouter } from "next/navigation";
 
 import useRequest from "../../../../hooks/use-request";
 import PasswordField from "@/components/forms/PasswordField";
-import ErrorMessages from "@/components/global/ErrorMessages";
+import Toast from "@/components/global/toast";
 
 /* VERIFICATION SCHEMA */
 const schema = z
@@ -63,7 +62,7 @@ const ChangePasswordForm = ({ data, token }: Props) => {
 
   return (
     <>
-      <ErrorMessages requestErrors={requestErrors} />
+      <Toast type="error" message={requestErrors} />
 
       <form
         className="flex flex-col gap-4 bg-primary-700 p-4 w-3/4 md:w-1/2 rounded-md"

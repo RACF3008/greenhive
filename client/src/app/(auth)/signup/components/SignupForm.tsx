@@ -1,6 +1,5 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -11,7 +10,7 @@ import useRequest from "@/hooks/use-request";
 import InputField from "@/components/forms/InputField";
 import { CheckboxField as TermsCheckbox } from "@/components/forms/CheckboxField";
 import PasswordField from "@/components/forms/PasswordField";
-import ErrorMessages from "@/components/global/ErrorMessages";
+import Toast from "@/components/global/toast";
 
 /* VERIFICATION SCHEMA */
 const schema = z
@@ -72,7 +71,8 @@ const SignupForm = ({ data }: { data: any }) => {
 
   return (
     <>
-      <ErrorMessages requestErrors={requestErrors} />
+      <Toast type="error" message={requestErrors} />
+
       <form
         className="flex flex-col gap-4 bg-primary-700 p-4 w-3/4 md:w-1/2 rounded-md"
         onSubmit={handleSubmit(handleOnSubmit)}
