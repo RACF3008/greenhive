@@ -11,6 +11,7 @@ import useRequest from "@/hooks/use-request";
 import InputField from "@/components/forms/InputField";
 import { CheckboxField as TermsCheckbox } from "@/components/forms/CheckboxField";
 import PasswordField from "@/components/forms/PasswordField";
+import ErrorMessages from "@/components/global/ErrorMessages";
 
 /* VERIFICATION SCHEMA */
 const schema = z
@@ -64,28 +65,14 @@ const SignupForm = ({ data }: { data: any }) => {
     resolver: zodResolver(schema),
   });
 
-  const [visibleError, setVisibleError] = useState("");
-
-  useEffect(() => {
-    if (requestErrors && typeof requestErrors === "string") {
-      setVisibleError(requestErrors);
-      const timer = setTimeout(() => setVisibleError(""), 4000);
-      return () => clearTimeout(timer);
-    }
-  }, [requestErrors]);
-
   /* HANDLERS */
   const handleOnSubmit = async (formData: Inputs) => {
-    doRequest(formData);
+    await doRequest(formData);
   };
 
   return (
     <>
-      {visibleError && (
-        <div className="fixed top-4 left-1/2 transform -translate-x-1/2 bg-red-600 text-white px-6 py-3 rounded-md shadow-md z-50">
-          {visibleError}
-        </div>
-      )}
+      <ErrorMessages requestErrors={requestErrors} />
       <form
         className="flex flex-col gap-4 bg-primary-700 p-4 w-3/4 md:w-1/2 rounded-md"
         onSubmit={handleSubmit(handleOnSubmit)}

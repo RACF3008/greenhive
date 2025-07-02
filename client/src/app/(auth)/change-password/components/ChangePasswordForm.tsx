@@ -8,7 +8,7 @@ import { useRouter } from "next/navigation";
 
 import useRequest from "../../../../hooks/use-request";
 import PasswordField from "@/components/forms/PasswordField";
-import ErrorMessage from "@/components/global/ErrorMessage";
+import ErrorMessages from "@/components/global/ErrorMessages";
 
 /* VERIFICATION SCHEMA */
 const schema = z
@@ -55,16 +55,6 @@ const ChangePasswordForm = ({ data, token }: Props) => {
     resolver: zodResolver(schema),
   });
 
-  const [visibleError, setVisibleError] = useState("");
-
-  useEffect(() => {
-    if (requestErrors && typeof requestErrors === "string") {
-      setVisibleError(requestErrors);
-      const timer = setTimeout(() => setVisibleError(""), 5000);
-      return () => clearTimeout(timer);
-    }
-  }, [requestErrors]);
-
   /* HANDLERS */
   const handleOnSubmit = handleSubmit(async (formData) => {
     console.log(formData);
@@ -73,7 +63,8 @@ const ChangePasswordForm = ({ data, token }: Props) => {
 
   return (
     <>
-      {visibleError && <ErrorMessage message={visibleError} />}
+      <ErrorMessages requestErrors={requestErrors} />
+
       <form
         className="flex flex-col gap-4 bg-primary-700 p-4 w-3/4 md:w-1/2 rounded-md"
         onSubmit={handleOnSubmit}

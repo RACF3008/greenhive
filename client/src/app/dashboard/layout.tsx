@@ -13,7 +13,7 @@ export default async function DashboardLayout({
 
   const res = await client.get("/api/users/currentuser");
   const currentUser = res.data.currentUser;
-  console.log(currentUser);
+  console.log("Current user: ", currentUser);
 
   return (
     <div className="h-screen flex">

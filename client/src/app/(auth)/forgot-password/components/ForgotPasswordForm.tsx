@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 
 import useRequest from "../../../../hooks/use-request";
 import InputField from "../../../../components/forms/InputField";
+import ErrorMessages from "@/components/global/ErrorMessages";
 
 const schema = z.object({
   email: z.string().email({ message: "Email must be valid" }),
@@ -33,16 +34,6 @@ const ForgotPasswordForm = () => {
     resolver: zodResolver(schema),
   });
 
-  const [visibleError, setVisibleError] = useState("");
-
-  useEffect(() => {
-    if (requestErrors && typeof requestErrors === "string") {
-      setVisibleError(requestErrors);
-      const timer = setTimeout(() => setVisibleError(""), 4000);
-      return () => clearTimeout(timer);
-    }
-  }, [requestErrors]);
-
   /* HANDLERS */
   const handleOnSubmit = async (formData: Inputs) => {
     doRequest(formData);
@@ -50,11 +41,8 @@ const ForgotPasswordForm = () => {
 
   return (
     <>
-      {visibleError && (
-        <div className="fixed top-4 left-1/2 transform -translate-x-1/2 bg-red-600 text-white px-6 py-3 rounded-md shadow-md z-50">
-          {visibleError}
-        </div>
-      )}
+      <ErrorMessages requestErrors={requestErrors} />
+
       <form
         className="flex flex-col gap-4 bg-primary-700 p-8 w-3/4 md:w-1/2 rounded-lg"
         onSubmit={handleSubmit(handleOnSubmit)}

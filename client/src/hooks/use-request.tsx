@@ -8,7 +8,7 @@ type ErrorResponse = {
 
 type UseRequestProps<T> = {
   url: string;
-  method: Method;
+  method: "get" | "post" | "put" | "delete";
   body?: T;
   onSuccess?: (data: any) => void;
 };
@@ -19,19 +19,12 @@ export default function useRequest<T = any>({
   body,
   onSuccess,
 }: UseRequestProps<T>) {
-  const [errors, setErrors] = useState<string[] | null>(null);
+  const [errors, setErrors] = useState<string[]>([]);
 
-  const doRequest = async (overrideBody?: Partial<T>) => {
+  const doRequest = async (props = {}) => {
     try {
-      setErrors(null);
-      const response = await axios.request({
-        url,
-        method,
-        data: overrideBody || body,
-        withCredentials: true,
-      });
-
-      console.log("Response:", response);
+      setErrors([]);
+      const response = await axios[method](url, { ...body, ...props });
 
       if (onSuccess) {
         onSuccess(response.data);
@@ -43,7 +36,7 @@ export default function useRequest<T = any>({
         const messages = err.response.data.errors.map(
           (e: ErrorResponse) => e.message
         );
-        setErrors(messages);
+        setErrors(messages); // <- array of strings
       } else {
         setErrors(["Something went wrong"]);
       }
