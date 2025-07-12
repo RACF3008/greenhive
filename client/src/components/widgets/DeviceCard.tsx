@@ -10,7 +10,7 @@ type DeviceData = {
 
 const DeviceCard = ({ data }: { data: DeviceData }) => {
   return (
-    <div className="flex p-4 bg-primary-600 rounded-md w-full lg:w-[600px]  flex-shrink-0">
+    <div className="flex p-4 bg-primary-600 rounded-md w-full lg:w-[600px]  flex-shrink-0 lg:opacity-70 hover:opacity-100 transition-all ease-in-out cursor-pointer">
       {/* DEVICE IMAGE */}
       <div className="w-1/3 relative aspect-square">
         <Image

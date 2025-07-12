@@ -28,7 +28,8 @@ export default function ScrollContainer({
         // only on lg and up
         if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
           e.preventDefault();
-          el.scrollLeft -= e.deltaY; // ⬅️ reverse direction
+          const sensitivity = 2;
+          el.scrollLeft -= e.deltaY * sensitivity; // ⬅️ reverse direction
         }
       }
     };
@@ -47,11 +48,11 @@ export default function ScrollContainer({
     <div className="relative w-full">
       {/* Left shadow */}
       {!atStart && (
-        <div className="hidden lg:block pointer-events-none absolute left-0 top-0 h-full w-8 bg-gradient-to-r from-black/20 to-transparent z-10" />
+        <div className="hidden lg:block pointer-events-none absolute left-0 top-0 h-full w-12 bg-gradient-to-r from-black/70 to-transparent z-10" />
       )}
       {/* Right shadow */}
       {!atEnd && (
-        <div className="hidden lg:block pointer-events-none absolute right-0 top-0 h-full w-8 bg-gradient-to-l from-black/20 to-transparent z-10" />
+        <div className="hidden lg:block pointer-events-none absolute right-0 top-0 h-full w-12 bg-gradient-to-l from-black/70 to-transparent z-10" />
       )}
 
       <div

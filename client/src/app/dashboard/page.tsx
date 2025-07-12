@@ -11,6 +11,7 @@ import ScrollContainer from "@/components/layout/ScrollContainer";
 
 import { deviceData } from "@/data/deviceData";
 import ComingSoon from "@/components/widgets/ComingSoon";
+import Link from "next/link";
 
 function HomePage() {
   const user = useUserContext();
@@ -36,21 +37,48 @@ function HomePage() {
 
         {/* DEVICES QUICK ACCESS */}
         <div className="flex flex-col gap-4 w-full">
-          <h1 className="font-semibold text-xl text-primary-100">
-            Device Quick Access
-          </h1>
+          <div className="flex items-center justify-between">
+            <h1 className="font-semibold text-xl text-primary-100">
+              Device Quick Access
+            </h1>
+            <Link href="/dashboard/devices" className="text-primary-200">
+              View All
+            </Link>
+          </div>
           <ScrollContainer>
             {deviceData.map((device) => (
-              <DeviceCard key={device.id} data={device} />
+              <Link key={device.id} href={`/dashboard/devices/${device.id}`}>
+                <DeviceCard data={device} />
+              </Link>
             ))}
           </ScrollContainer>
         </div>
 
         {/* CLUSTERS QUICK ACCESS */}
-        <ComingSoon />
+        <div className="flex flex-col gap-4 w-full">
+          <h1 className="font-semibold text-xl text-primary-100">
+            Cluster Quick Access
+          </h1>
+          <ComingSoon height="h-[300px]" />
+        </div>
       </div>
+
       {/* RIGHT */}
-      <div className="w-full lg:w-1/3"></div>
+      <div className="flex flex-col gap-4 w-full lg:w-1/3 p-4">
+        {/* MAIN USER TASKS */}
+        <div className="flex flex-col gap-4 w-full">
+          <h1 className="font-semibold text-xl text-primary-100">User Tasks</h1>
+          <ComingSoon height="h-[500px]" />
+        </div>
+
+        {/* PROJECT SHOWCASE */}
+        <div className="flex flex-col gap-4 w-full">
+          <h1 className="font-semibold text-xl text-primary-100">
+            Project Showcase
+          </h1>
+          <ComingSoon height="h-[500px]" />
+        </div>
+      </div>
     </div>
   );
 }
