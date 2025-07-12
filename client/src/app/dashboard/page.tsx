@@ -10,6 +10,7 @@ import DeviceCard from "@/components/widgets/DeviceCard";
 import ScrollContainer from "@/components/layout/ScrollContainer";
 
 import { deviceData } from "@/data/deviceData";
+import ComingSoon from "@/components/widgets/ComingSoon";
 
 function HomePage() {
   const user = useUserContext();
@@ -44,6 +45,9 @@ function HomePage() {
             ))}
           </ScrollContainer>
         </div>
+
+        {/* CLUSTERS QUICK ACCESS */}
+        <ComingSoon />
       </div>
       {/* RIGHT */}
       <div className="w-full lg:w-1/3"></div>
