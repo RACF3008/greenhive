@@ -8,8 +8,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 
 import useRequest from "../../../../hooks/use-request";
-import InputField from "../../../../components/forms/InputField";
-import { CheckboxField as SessionCheckbox } from "../../../../components/forms/CheckboxField";
+import InputField from "../../../forms/InputField";
+import { CheckboxField as SessionCheckbox } from "../../../forms/CheckboxField";
 import PasswordField from "@/components/forms/PasswordField";
 import Link from "next/link";
 import Toast from "@/components/common/Toast";

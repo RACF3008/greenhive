@@ -7,7 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 
 import useRequest from "../../../../hooks/use-request";
-import InputField from "../../../../components/forms/InputField";
+import InputField from "../../../forms/InputField";
 import Toast from "@/components/common/Toast";
 
 const schema = z.object({

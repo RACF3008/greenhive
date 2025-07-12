@@ -3,7 +3,7 @@
 import WelcomeCard from "@/components/widgets/WelcomeCard";
 import { useUserContext } from "@/contexts/dashboard-context";
 
-import QuickActionButton from "./components/QuickActionButtons";
+import QuickActionButton from "../../components/pages/dashboard/QuickActionButtons";
 import AssignmentAddIcon from "@mui/icons-material/AssignmentAdd";
 import AddIcon from "@mui/icons-material/Add";
 import DeviceCard from "@/components/widgets/DeviceCard";

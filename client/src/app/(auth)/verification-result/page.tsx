@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 
 import buildClient from "@/api/build-client";
-import VerificationResult from "./components/VerificationResult";
+import VerificationResult from "../../../components/pages/auth/verification-result/VerificationResult";
 
 const VerificationPage = async ({
   searchParams,

@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 
-import ChangePasswordForm from "./components/ChangePasswordForm";
+import ChangePasswordForm from "../../../components/pages/auth/change-password/ChangePasswordForm";
 
 const ChangePasswordPage = async ({
   searchParams,
