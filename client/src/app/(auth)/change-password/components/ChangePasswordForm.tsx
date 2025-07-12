@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 
 import useRequest from "../../../../hooks/use-request";
 import PasswordField from "@/components/forms/PasswordField";
-import Toast from "@/components/global/toast";
+import Toast from "@/components/common/Toast";
 
 /* VERIFICATION SCHEMA */
 const schema = z

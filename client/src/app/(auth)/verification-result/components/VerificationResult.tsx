@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 
-import ErrorMessage from "@/components/global/toast";
+import ErrorMessage from "@/components/common/Toast";
 
 type Props = {
   verified: boolean;

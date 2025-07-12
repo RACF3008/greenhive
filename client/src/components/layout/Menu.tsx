@@ -1,3 +1,5 @@
+import React from "react";
+
 import Link from "next/link";
 import HomeFilledIcon from "@mui/icons-material/HomeFilled";
 import HiveIcon from "@mui/icons-material/Hive";
@@ -33,7 +35,7 @@ const menuItems = [
         label: "Devices",
         href: "dashboard/devices",
         icon: (
-          <span className="h-6 w-6">
+          <span className="min-h-6 min-w-6">
             <FontAwesomeIcon icon={faSeedling} />
           </span>
         ),
@@ -58,11 +60,11 @@ const menuItems = [
   {
     title: "OTHERS",
     items: [
-      // {
-      //   label: 'Settings',
-      //   href: '/settings',
-      //   icon: <SettingsIcon />,
-      // },
+      {
+        label: "Settings",
+        href: "/settings",
+        icon: <SettingsIcon />,
+      },
       {
         label: "Logout",
         href: "/logout",
@@ -78,19 +80,22 @@ type MenuProps = {
 
 const Menu = ({ role }: MenuProps) => {
   return (
-    <div className="mt-4 text-sm">
+    <div className="mt-4 text-sm min-width:[100px]">
       {menuItems.map((section) => (
         <div className="flex flex-col gap-2" key={section.title}>
           <span className="hidden lg:block text-primary-300 font-light my-4">
             {section.title}
           </span>
+          <div className="flex lg:hidden bg-primary-300 width-full height-[10px] my-1"></div>
           {section.items.map((item) => (
             <Link
               href={item.href}
               key={item.href}
-              className="flex items-center justify-center lg:justify-start gap-4 p-2 text-primary-100 rounded-md hover:bg-primary-400 transition"
+              className="flex items-center justify-center lg:justify-start gap-4 p-2 text-primary-100 rounded-md text-md hover:bg-primary-400 transition"
             >
-              {item.icon}
+              {React.cloneElement(item.icon, {
+                style: { width: 30, height: 30 },
+              })}
               <span className="hidden lg:block">{item.label}</span>
             </Link>
           ))}

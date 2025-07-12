@@ -12,7 +12,7 @@ import InputField from "../../../../components/forms/InputField";
 import { CheckboxField as SessionCheckbox } from "../../../../components/forms/CheckboxField";
 import PasswordField from "@/components/forms/PasswordField";
 import Link from "next/link";
-import Toast from "@/components/global/toast";
+import Toast from "@/components/common/Toast";
 
 /* VERIFICATION SCHEMA */
 const schema = z.object({

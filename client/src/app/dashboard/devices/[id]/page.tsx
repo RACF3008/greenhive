@@ -6,11 +6,11 @@ import Image from "next/image";
 
 import WaterDropIcon from "@mui/icons-material/WaterDrop";
 
-import SwitchButton from "@/components/SwitchButton";
-import TankIndicator from "@/components/TankIndicator";
-import MyLineChart from "@/components/widgets/LineChart";
+import SwitchButton from "@/components/widgets/SwitchButton";
+import TankIndicator from "@/components/widgets/TankIndicator";
+import MyLineChart from "@/components/widgets/charts/LineChart";
 import MyNotifications from "@/components/widgets/Notifications";
-import Timers from "@/components/Timers";
+import Timers from "@/components/widgets/Timers";
 
 const deviceData = {
   id: "123442565429",

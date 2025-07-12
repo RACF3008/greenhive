@@ -12,7 +12,7 @@
   color: #fff !important;
   width: 100% !important;
   border: none !important;
-  font-family: 'Inter', sans-serif !important;
+  font-family: "Inter", sans-serif !important;
 }
 .react-calendar__tile--now {
   background-color: #15e585 !important;
@@ -125,4 +125,13 @@
 }
 .rbc-day-slot.rbc-time-column {
   border-color: #667474 !important;
+}
+
+/* SCROLLBAR */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-hide {
+  -ms-overflow-style: none; /* IE & Edge */
+  scrollbar-width: none; /* Firefox */
 }

@@ -34,6 +34,8 @@ export class TokenCreatedListener extends Listener<TokenCreatedEvent> {
       footer: "",
     };
 
+    console.log("token", data.value);
+
     // Definir el contenido del correo dependiendo del proposito
     switch (data.purpose) {
       case TokenPurpose.USER_AUTHENTICATION:

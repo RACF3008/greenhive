@@ -8,7 +8,7 @@ import { useRouter } from "next/navigation";
 
 import useRequest from "../../../../hooks/use-request";
 import InputField from "../../../../components/forms/InputField";
-import Toast from "@/components/global/toast";
+import Toast from "@/components/common/Toast";
 
 const schema = z.object({
   email: z.string().email({ message: "Email must be valid" }),

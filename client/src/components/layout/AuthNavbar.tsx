@@ -14,7 +14,7 @@ const AuthNavbar = () => {
         className="flex items-center justify-center lg:justify-start gap-1"
       >
         <Image src="/logo.png" alt="logo" width={48} height={48} />
-        <span className="hidden lg:block text-white font-bold text-lg">
+        <span className="hidden lg:flex text-white font-bold text-2xl">
           GreenHive
         </span>
       </Link>

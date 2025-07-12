@@ -1,4 +1,5 @@
 import buildClient from "@/api/build-client";
+import DashboardFooter from "@/components/layout/DashboardFooter";
 import Menu from "@/components/layout/Menu";
 import Navbar from "@/components/layout/Navbar";
 import DashboardProvider from "@/contexts/DashboardProvider";
@@ -24,8 +25,15 @@ export default async function DashboardLayout({
             href="/"
             className="flex items-center justify-center lg:justify-start gap-1"
           >
-            <Image src="/logo.png" alt="logo" width={48} height={48} />
-            <span className="hidden lg:block text-white font-bold text-lg">
+            <div className="relative min-w-12 min-h-12">
+              <Image
+                src="/logo.png"
+                alt="logo"
+                fill
+                className="object-contain"
+              />
+            </div>
+            <span className="hidden lg:block text-white font-bold text-xl">
               GreenHive
             </span>
           </Link>
@@ -37,6 +45,7 @@ export default async function DashboardLayout({
         <div className="w-[86%] md:w-[90%] lg:w-[81%] xl:w-[86%] bg-primary-500 overflow-y-scroll flex flex-col">
           <Navbar />
           {children}
+          <DashboardFooter />
         </div>
       </div>
     </DashboardProvider>

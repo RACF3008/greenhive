@@ -1,10 +1,10 @@
-import Search from "@/components/Search";
+import SearchInput from "@/components/common/SearchInput";
 import SwapVertIcon from "@mui/icons-material/SwapVert";
 import AddIcon from "@mui/icons-material/Add";
 
 import FilterListIcon from "@mui/icons-material/FilterList";
-import Pagination from "@/components/Pagination";
-import DeviceCard from "@/components/DeviceCard";
+import Pagination from "@/components/common/Pagination";
+import DeviceCard from "@/components/widgets/VDeviceCard";
 
 const deviceDataList = [
   {
@@ -52,7 +52,7 @@ const DevicesListPage = () => {
           All Devices
         </h1>
         <div className="flex flex-col md:flex-row items-center gap-4 w-full md:w-auto">
-          <Search />
+          <SearchInput />
           <div className="flex items-center gap-4 self-end">
             <button className="bg-yellowAccent-500 w-8 h-8 p-1 flex items-center justify-center rounded-full text-primary-600">
               <FilterListIcon />

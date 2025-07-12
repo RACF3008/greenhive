@@ -59,7 +59,7 @@ interface DeviceData {
   description: string;
 }
 
-type DeviceCardProps = {
+type VDeviceCardProps = {
   deviceData: DeviceData;
 };
 
@@ -128,7 +128,7 @@ const renderSensor = (key: string, value: string | boolean, type: string) => {
   }
 };
 
-const DeviceCard = ({ deviceData }: DeviceCardProps) => {
+const VDeviceCard = ({ deviceData }: VDeviceCardProps) => {
   return (
     <Link href={`/devices/${deviceData.id}`}>
       <div className="relative bg-primary-400 rounded-md p-4 mt-[220px] cursor-pointer md:opacity-60 md:hover:opacity-100 transition-opacity">
@@ -166,4 +166,4 @@ const DeviceCard = ({ deviceData }: DeviceCardProps) => {
   );
 };
 
-export default DeviceCard;
+export default VDeviceCard;
