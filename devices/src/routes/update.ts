@@ -67,11 +67,14 @@ router.put(
       version: device.version,
     });
 
-    await new DeviceInfoSetPublisher(mqttWrapper.client).publish({
-      name: device.name,
-      ownerId: device.ownerId,
-      ownerType: device.ownerType,
-    });
+    await new DeviceInfoSetPublisher(mqttWrapper.client).publish(
+      {
+        name: device.name,
+        ownerId: device.ownerId,
+        ownerType: device.ownerType,
+      },
+      device.id
+    );
 
     res.status(200).send(device);
   }
