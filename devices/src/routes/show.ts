@@ -1,18 +1,22 @@
-import express, { Request, Response } from 'express';
+import express, { Request, Response } from "express";
 
-import { NotFoundError } from '@greenhive/common';
-import { Device } from '../models/device';
+import { NotFoundError, requireAuth } from "@greenhive/common";
+import { Device } from "../models/device";
 
 const router = express.Router();
 
-router.get('/api/devices/:id', async (req: Request, res: Response) => {
-  const device = await Device.findById(req.params.id);
+router.get(
+  "/api/devices/:id",
+  requireAuth,
+  async (req: Request, res: Response) => {
+    const device = await Device.findById(req.params.id);
 
-  if (!device) {
-    throw new NotFoundError();
+    if (!device) {
+      throw new NotFoundError();
+    }
+
+    res.send(device);
   }
-
-  res.send(device);
-});
+);
 
 export { router as showDeviceRouter };

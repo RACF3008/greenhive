@@ -5,6 +5,7 @@ import { app } from "../../app";
 
 import { natsWrapper } from "../../nats-wrapper";
 import { DeviceTypes, OwnerTypes } from "@greenhive/common";
+import { mqttWrapper } from "../../mqtt-wrapper";
 
 it("returns a 401 if the user is not authenticated", async () => {
   await request(app)
@@ -81,7 +82,7 @@ it("returns a 404 if device id is not found", async () => {
 });
 
 it("returns a 401 if the user does not own the device", async () => {
-  const { cookie: cookie1, id: id1 } = global.signin();
+  const { cookie: cookie1 } = global.signin();
   const response = await request(app)
     .post("/api/devices/new")
     .set("Cookie", cookie1)
@@ -93,7 +94,7 @@ it("returns a 401 if the user does not own the device", async () => {
     })
     .expect(201);
 
-  const { cookie: cookie2, id: id2 } = global.signin();
+  const { cookie: cookie2 } = global.signin();
   await request(app)
     .put(`/api/devices/${response.body.id}`)
     .set("Cookie", cookie2)
@@ -106,43 +107,39 @@ it("returns a 401 if the user does not own the device", async () => {
     .expect(401);
 });
 
-it.todo(
-  "updates the device with the provided information when owned by the user"
-);
-// , async () => {
-//   const { cookie, id } = global.signin();
+it("updates the device with the provided information when owned by the user", async () => {
+  const { cookie } = global.signin();
 
-//   const response = await request(app)
-//     .post("/api/devices/new")
-//     .set("Cookie", cookie)
-//     .send({
-//       type: DeviceTypes.TOWER,
-//       name: "testDevice",
-//       hardware: "v1.0.0",
-//       firmware: "v1.0.0",
-//     })
-//     .expect(201);
+  const response = await request(app)
+    .post("/api/devices/new")
+    .set("Cookie", cookie)
+    .send({
+      type: DeviceTypes.TOWER,
+      name: "testDevice",
+      hardware: "v1.0.0",
+      firmware: "v1.0.0",
+    })
+    .expect(201);
 
-//   await request(app)
-//     .put(`/api/devices/${response.body.id}`)
-//     .set("Cookie", cookie)
-//     .send({
-//       name: "updatedTestDevice",
-//       description: "Lorem ipsum dolor sit amet consectetur adipiscing elit.",
-//       ownerId: new mongoose.Types.ObjectId().toHexString(),
-//       ownerType: OwnerTypes.CLUSTER,
-//     })
-//     .expect(200);
+  await request(app)
+    .put(`/api/devices/${response.body.id}`)
+    .set("Cookie", cookie)
+    .send({
+      name: "updatedTestDevice",
+      description: "Lorem ipsum dolor sit amet consectetur adipiscing elit.",
+      ownerId: new mongoose.Types.ObjectId().toHexString(),
+      ownerType: OwnerTypes.CLUSTER,
+    })
+    .expect(200);
 
-// const deviceResponse = await request(app)
-//   .get(`/api/devices/${response.body.id}`)
-//   .send()
-//   .expect(200);
+  const deviceResponse = await request(app)
+    .get(`/api/devices/${response.body.id}`)
+    .set("Cookie", cookie)
+    .send()
+    .expect(200);
 
-// expect(deviceResponse.body.name).toEqual("updatedTestDevice");
-// }
-
-it.todo("allows only device's cluster members (with permissions) to update it");
+  expect(deviceResponse.body.name).toEqual("updatedTestDevice");
+});
 
 it("publishes a deviceUpdatedEvent to NATS", async () => {
   const { cookie } = global.signin();
@@ -170,4 +167,30 @@ it("publishes a deviceUpdatedEvent to NATS", async () => {
   expect(natsWrapper.client.publish).toHaveBeenCalled();
 });
 
-it.todo("publishes a DeviceInfoSet message to MQTT");
+it("publishes a DeviceInfoSet message to MQTT", async () => {
+  const { cookie } = global.signin();
+  const response = await request(app)
+    .post("/api/devices/new")
+    .set("Cookie", cookie)
+    .send({
+      type: DeviceTypes.TOWER,
+      name: "testDevice",
+      hardware: "v1.0.0",
+      firmware: "v1.0.0",
+    });
+
+  await request(app)
+    .put(`/api/devices/${response.body.id}`)
+    .set("Cookie", cookie)
+    .send({
+      name: "updatedTestDevice",
+      description: "Lorem ipsum dolor sit amet consectetur adipiscing elit.",
+      ownerId: new mongoose.Types.ObjectId().toHexString(),
+      ownerType: OwnerTypes.CLUSTER,
+    })
+    .expect(200);
+
+  expect(mqttWrapper.client.publish).toHaveBeenCalled();
+});
+
+it.todo("allows only device's cluster members (with permissions) to update it");

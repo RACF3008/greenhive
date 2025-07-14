@@ -2,35 +2,46 @@ import request from "supertest";
 import mongoose from "mongoose";
 
 import { app } from "../../app";
+import { DeviceTypes } from "@greenhive/common";
 
-it("returns a 404 if device is not found", async () => {
-  const id = new mongoose.Types.ObjectId().toHexString();
-
-  await request(app).get(`/api/devices/${id}`).send().expect(404);
+it("requires auth to show a device", async () => {
+  await request(app)
+    .get(`/api/devices/${new mongoose.Types.ObjectId()}`)
+    .send()
+    .expect(401);
 });
 
-it.todo(
-  "returns a the device info if it is found and belongs to the current user/cluster"
-);
+it("returns a 404 if device is not found", async () => {
+  const { cookie } = await global.signin();
+  const id = new mongoose.Types.ObjectId().toHexString();
 
-// , async () => {
-//   const { id } = global.signin();
+  await request(app)
+    .get(`/api/devices/${id}`)
+    .set("Cookie", cookie)
+    .send()
+    .expect(404);
+});
 
-//   const response = await request(app)
-//     .post("/api/devices/new")
-//     .send({
-//       type: "tower",
-//       name: "testDevice",
-//       status: "online",
-//       userId: id,
-//     })
-//     .expect(201);
+it("returns a the device info if it is found and belongs to the current user", async () => {
+  const { cookie } = global.signin();
 
-//   const deviceResponse = await request(app)
-//     .get(`/api/devices/${response.body.id}`)
-//     .send()
-//     .expect(200);
+  const response = await request(app)
+    .post("/api/devices/new")
+    .set("Cookie", cookie)
+    .send({
+      type: DeviceTypes.TOWER,
+      name: "testDevice",
+      hardware: "v1.0.0",
+      firmware: "v1.0.0",
+    })
+    .expect(201);
 
-//   expect(deviceResponse.body.type).toEqual("tower");
-//   expect(deviceResponse.body.name).toEqual("testDevice");
-// }
+  const deviceResponse = await request(app)
+    .get(`/api/devices/${response.body.id}`)
+    .set("Cookie", cookie)
+    .send()
+    .expect(200);
+
+  expect(deviceResponse.body.type).toEqual("tower");
+  expect(deviceResponse.body.name).toEqual("testDevice");
+});

@@ -3,44 +3,44 @@ import mongoose from "mongoose";
 
 import { app } from "../../app";
 
-it.todo("can fetch a list of devices related to a user");
+it("can fetch a list of devices related to a user", async () => {
+  const { cookie, id } = global.signin();
 
-// , async () => {
-//   const { cookie, id } = global.signin();
-//   const fakeId = new mongoose.Types.ObjectId().toHexString();
+  await request(app)
+    .post("/api/devices/new")
+    .set("Cookie", cookie)
+    .send({
+      type: "tower",
+      name: "testTower1",
+      hardware: "1.0.0",
+      firmware: "1.0.0",
+    })
+    .expect(201);
+  await request(app)
+    .post("/api/devices/new")
+    .set("Cookie", cookie)
+    .send({
+      type: "tower",
+      name: "testTower2",
+      hardware: "1.0.0",
+      firmware: "1.0.0",
+    })
+    .expect(201);
+  await request(app)
+    .post("/api/devices/new")
+    .set("Cookie", cookie)
+    .send({
+      type: "tower",
+      name: "testTower3",
+      hardware: "1.0.0",
+      firmware: "1.0.0",
+    })
+    .expect(201);
 
-//   await request(app)
-//     .post("/api/devices/new")
-//     .send({
-//       type: "tower",
-//       name: "testDevice1",
-//       status: "online",
-//       userId: id,
-//     })
-//     .expect(201);
-//   await request(app)
-//     .post("/api/devices/new")
-//     .send({
-//       type: "tower",
-//       name: "testDevice1",
-//       status: "online",
-//       userId: fakeId,
-//     })
-//     .expect(201);
-//   await request(app)
-//     .post("/api/devices/new")
-//     .send({
-//       type: "tower",
-//       name: "testDevice1",
-//       status: "online",
-//       userId: id,
-//     })
-//     .expect(201);
-
-//   const response = await request(app)
-//     .get("/api/devices")
-//     .set("Cookie", cookie)
-//     .send()
-//     .expect(200);
-//   expect(response.body.length).toEqual(2);
-// }
+  const response = await request(app)
+    .get("/api/devices")
+    .set("Cookie", cookie)
+    .send()
+    .expect(200);
+  expect(response.body.length).toEqual(3);
+});
