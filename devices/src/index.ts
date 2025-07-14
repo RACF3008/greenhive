@@ -43,13 +43,20 @@ const start = async () => {
 
   // NATS Listeners
 
+  // MQTT Connection
   try {
     await mqttWrapper.connect("mqtt://mosquitto-internal:1883", {
       username: process.env.MQTT_USER,
       password: process.env.MQTT_PASS,
     });
+    natsWrapper.client.on("close", () => {
+      console.log("NATS connection closed");
+      process.exit();
+    });
+    process.on("SIGINT", () => natsWrapper.client.close());
+    process.on("SIGTERM", () => natsWrapper.client.close());
   } catch (err) {
-    console.error("Failed to connect to MQTT broker", err);
+    console.error("Error with MQTT Wrapper", err);
   }
 
   // MQTT Listeners
